@@ -13,7 +13,8 @@ function Silhouette() {
 
 export default function PlayerCard({ player, draggable = false }) {
   const { attributes, listeners, setNodeRef, isDragging } = useDraggable({
-    id: player.id,
+    id: `panel-${player.id}`,
+    data: { playerId: player.id, source: 'panel' },
     disabled: !draggable,
   })
 

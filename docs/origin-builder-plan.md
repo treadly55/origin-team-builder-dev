@@ -19,13 +19,13 @@ Built solo, for around 50 friends to use. Not a public product. Not monetised.
 |---|---|
 | Player pool | 28 fictional players per team, hardcoded as a JS array initially, moved to Supabase in Phase 2 |
 | Player fields | name, club, eligible positions, photo (silhouette only in v1), rating (0–99) |
-| Position eligibility | Per-player array of allowed position numbers. Lineup-level "loose mode" toggle disables the restriction. |
-| Squad size per lineup | 17 positioned (1–13 + 4 interchange) + 6-man bench + 1 emergency. Bench and emergency accept any same-team player. |
+| Position eligibility | Per-player array of allowed position numbers (1–13 only). Lineup-level "loose mode" toggle disables the restriction for field positions. |
+| Squad size per lineup | 13 field positions + 6-slot bench (positions 14–19). Bench is unrestricted — any player can go on any bench slot, no eligibility or team check. Bench-to-bench drags swap players. |
 | Team per lineup | One — NSW or QLD chosen at creation, immutable thereafter |
 | Field style | FIFA/Football Manager formation view (flat stylized; design handled separately) |
 | Device | Desktop only in v1 |
 | Sharing | Read-only snapshot link. Player data frozen into snapshot at share time. Phase 2 only. |
-| Saved lineup content | 17 positions + bench + emergency + name + team + timestamps. No notes, no captain/kicker flags. |
+| Saved lineup content | 19 positions (1–13 field, 14–19 bench) + name + team + timestamps. No notes, no captain/kicker flags. |
 | Dashboard | Simple list: name, team, date modified |
 | Player management | Hardcoded JS array in Phase 1; Supabase Table Editor in Phase 2 |
 | AI builder | Claude Code (terminal / VS Code) |
@@ -107,15 +107,11 @@ No TypeScript, but the data shapes still need to be agreed. Documented in JSDoc-
   slots: [
     { position: 1,  playerId: "p_001" },
     { position: 2,  playerId: "p_003" },
-    // ... through position 17 ...
-    { position: 17, playerId: null },
-  ],                                  // length 17, positions 1..17
-  bench: [
-    { index: 0, playerId: "p_023" },
-    { index: 1, playerId: null },
-    // ... through index 5 ...
-  ],                                  // length 6
-  emergency: { playerId: null },      // single slot
+    // ... through position 13 (field) ...
+    { position: 14, playerId: "p_023" },
+    // ... through position 19 (bench) ...
+    { position: 19, playerId: null },
+  ],                                  // length 19; positions 1..13 = field, 14..19 = bench
   version: 1,                         // bumped on save (used for conflict detection in Phase 2)
   createdAt: "2026-04-28T10:00:00Z",  // ISO string
   updatedAt: "2026-04-28T10:00:00Z",  // ISO string
@@ -134,13 +130,8 @@ No TypeScript, but the data shapes still need to be agreed. Documented in JSDoc-
   name: "My Origin I lineup",
   slots: [
     { position: 1, player: { /* full player object */ } },
-    // ...
+    // ... through position 19; 1..13 field, 14..19 bench
   ],
-  bench: [
-    { index: 0, player: { /* full player object */ } },
-    // ...
-  ],
-  emergency: { player: null },
   createdAt: "2026-04-28T10:00:00Z",
 }
 ```
@@ -149,12 +140,11 @@ No TypeScript, but the data shapes still need to be agreed. Documented in JSDoc-
 
 ## 6. Rule functions (the only logic worth isolating)
 
-Five pure JavaScript functions live in `src/domain/rules.js`. They take inputs and return outputs. No React, no DOM, no storage. They encode the actual rules of the app.
+Four pure JavaScript functions live in `src/domain/rules.js`. They take inputs and return outputs. No React, no DOM, no storage. They encode the actual rules of the app.
 
 ```js
 // src/domain/rules.js
 export function canPlayerFillPosition(player, position, looseMode) { ... }
-export function canPlayerFillBenchOrEmergency(player, lineupTeam) { ... }
 export function findPlayerPlacement(lineup, playerId) { ... }
 export function isLineupComplete(lineup) { ... }
 export function isLineupValid(lineup, playersById) { ... }
@@ -236,9 +226,7 @@ create table lineups (
   team text not null check (team in ('NSW','QLD')),
   name text not null,
   loose_mode boolean not null default false,
-  slots jsonb not null,
-  bench jsonb not null,
-  emergency jsonb not null,
+  slots jsonb not null,                   -- length 19; 1..13 field, 14..19 bench
   version int not null default 1,
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()
@@ -270,7 +258,7 @@ Row-Level Security:
 src/
   domain/
     types.js          ← JSDoc-only documentation of data shapes
-    rules.js          ← the five pure rule functions
+    rules.js          ← the four pure rule functions
     seedPlayers.js    ← hardcoded 56-player array (Phase 1; deleted in Phase 2)
   components/         ← React components, grouped by feature
   pages/              ← top-level route components
@@ -293,7 +281,7 @@ Two architectural rules worth holding to:
 
 Each phase has milestones in `development-roadmap.md`. Summary here:
 
-**Phase 1 — Local-first MVP and beyond.** Drag-drop working as fast as possible, then everything else that can be done without a server: bench, emergency, save/load to localStorage, dashboard, rename/duplicate/delete. Single-user assumption, no auth, no sharing.
+**Phase 1 — Local-first MVP and beyond.** Drag-drop working as fast as possible, then everything else that can be done without a server: bench, save/load to localStorage, dashboard, rename/duplicate/delete. Single-user assumption, no auth, no sharing.
 
 **Phase 2 — Supabase swap and backend-only features.** Replace localStorage with Supabase. Add real auth. Deploy to Netlify (this is when deployment makes sense — there's a real app to deploy). Add sharing, conflict detection, password reset.
 

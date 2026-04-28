@@ -1,4 +1,4 @@
-import { useDroppable } from '@dnd-kit/core'
+import { useDraggable, useDroppable } from '@dnd-kit/core'
 import styles from './FieldView.module.css'
 
 const POSITIONS = [
@@ -17,30 +17,44 @@ const POSITIONS = [
   { number: 13, top: 38, left: 50 },
 ]
 
-const DROPPABLE_POSITIONS = new Set([1])
-
 function lastName(fullName) {
   const parts = fullName.trim().split(/\s+/)
   return parts[parts.length - 1]
 }
 
 function PositionCircle({ position, player }) {
-  const isDroppable = DROPPABLE_POSITIONS.has(position.number)
-  const { setNodeRef, isOver } = useDroppable({
+  const droppable = useDroppable({
     id: `pos-${position.number}`,
-    data: { position: position.number },
-    disabled: !isDroppable,
+    data: { kind: 'position', position: position.number },
   })
+  const draggable = useDraggable({
+    id: player ? `field-${player.id}` : `field-empty-${position.number}`,
+    data: player
+      ? { playerId: player.id, source: 'field', position: position.number }
+      : undefined,
+    disabled: !player,
+  })
+
+  const setRef = (node) => {
+    droppable.setNodeRef(node)
+    draggable.setNodeRef(node)
+  }
 
   const classes = [styles.position]
   if (player) classes.push(styles.filled)
-  if (isOver) classes.push(styles.over)
+  if (droppable.isOver) classes.push(styles.over)
+  if (draggable.isDragging) classes.push(styles.dragging)
+
+  const dragProps = player
+    ? { ...draggable.listeners, ...draggable.attributes }
+    : {}
 
   return (
     <div
-      ref={isDroppable ? setNodeRef : undefined}
+      ref={setRef}
       className={classes.join(' ')}
       style={{ top: `${position.top}%`, left: `${position.left}%` }}
+      {...dragProps}
     >
       {player ? (
         <span className={styles.playerName}>{lastName(player.name)}</span>

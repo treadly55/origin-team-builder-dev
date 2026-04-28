@@ -1,25 +1,17 @@
-.field {
-  position: relative;
-  width: min(560px, 75vw);
-  aspect-ratio: 68 / 100;
-  background: linear-gradient(180deg, #1f6e3d 0%, #185f33 100%);
-  border: 2px solid rgba(255, 255, 255, 0.35);
-  border-radius: 10px;
-  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.45);
-  overflow: hidden;
+.bench {
+  width: 96px;
+  flex-shrink: 0;
+  height: 100%;
+  background: #5a3e2b;
+  border-right: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 32px 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 18px;
 }
 
-.halfwayLine {
-  position: absolute;
-  top: 50%;
-  left: 0;
-  right: 0;
-  height: 1px;
-  background: rgba(255, 255, 255, 0.35);
-}
-
-.position {
-  position: absolute;
+.slot {
   width: 52px;
   height: 52px;
   border-radius: 50%;
@@ -31,7 +23,6 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  transform: translate(-50%, -50%);
   transition: transform 80ms ease, background 80ms ease, border-color 80ms ease;
   user-select: none;
   touch-action: none;
@@ -47,14 +38,14 @@
   cursor: grabbing;
 }
 
-.dragging {
-  opacity: 0.45;
-}
-
 .over {
   background: rgba(255, 200, 80, 0.4);
   border-color: rgba(255, 200, 80, 0.95);
-  transform: translate(-50%, -50%) scale(1.1);
+  transform: scale(1.1);
+}
+
+.dragging {
+  opacity: 0.45;
 }
 
 .playerName {

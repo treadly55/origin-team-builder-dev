@@ -28,7 +28,7 @@ The whole goal of the early milestones is **see a player drag onto a position**.
 
 ### 1.3 — Seed players and rule functions
 
-**Build:** `src/domain/seedPlayers.js` containing the 56-player array (translated from `seed_players.sql`). `src/domain/rules.js` with all five rule functions. Manually verify each function against the test cases in `rule-functions-spec.md` by running them in the browser console once.
+**Build:** `src/domain/seedPlayers.js` containing the 56-player array (translated from `seed_players.sql`). `src/domain/rules.js` with all four rule functions. Manually verify each function against the test cases in `rule-functions-spec.md` by running them in the browser console once.
 
 **You can see:** Open the browser console on the home page. Type `import('./domain/rules.js').then(r => console.log(r.canPlayerFillPosition({eligiblePositions:[6]}, 6, false)))` — see `true`. Try a few rows from the test tables. (Or expose a simple debug page that runs them and prints results.)
 
@@ -66,11 +66,13 @@ The whole goal of the early milestones is **see a player drag onto a position**.
 
 **You can see:** Try to drag a halfback specialist (eligible only for position 7) onto position 1 — gets rejected with a message. Drag them onto position 7 — works. Drag the same player onto position 6 (if they're not eligible there) — rejected.
 
-### 1.9 — Bench (6 slots) and emergency (1 slot)
+### 1.9 — Bench (6 slots, positions 14–19)
 
-**Build:** `BenchRow` with 6 slots below the field. `EmergencySlot` next to it. Both accept any same-team player regardless of eligible positions. `canPlayerFillBenchOrEmergency` is checked on drop.
+**Build:** A `BenchColumn` component sits as a brown vertical strip between the panel and the field (~96px wide). 6 droppable circles labeled 14–19 stacked top-to-bottom. The bench is unrestricted: any player can go on any slot, no eligibility or team check, no toast on drop. Bench-to-bench drags **swap** (incoming wins, displaced player slides into the source slot). All other drops still **replace** (displaced player goes back to the panel).
 
-**You can see:** All 17 + 6 + 1 = 24 slots present and functional. Any NSW player can go on the bench or emergency. Dragging a player from a field position to the bench works.
+**You can see:** All 13 + 6 = 19 slots present and functional. Any NSW player can go on the bench. Dragging a field player to the bench works. Two bench players can be swapped by dragging one onto the other.
+
+**Note:** The original plan included 4 interchange slots (positions 14–17 on the field) and a 1-player emergency. Both were collapsed into a single 6-slot bench (positions 14–19) during this milestone. Plan §2 and `rule-functions-spec.md` reflect the new model.
 
 ### 1.10 — Magnetic snap
 

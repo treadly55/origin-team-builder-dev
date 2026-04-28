@@ -28,11 +28,13 @@ State of Origin is an annual three-match rugby league series between two Austral
 
 **Teams:** NSW Blues and QLD Maroons. Every player belongs to one. Every lineup is one team.
 
-**Positions 1–17:** Standard rugby league positions. 1–13 are starting positions with specific roles. 14–17 are interchange — no fixed position. The app adds a **6-man bench** and a **1-person emergency** that also accept any same-team player.
+**Positions 1–13:** Standard rugby league field positions (fullback through lock). The app enforces position eligibility on these.
 
-**Position eligibility:** Each player has a list of starting positions they're allowed to fill (e.g., `[1, 2, 5]` means fullback or either wing). The app enforces this by default. A **loose mode** toggle per lineup disables the rule for "what if a prop played fullback" scenarios.
+**Bench (positions 14–19):** A 6-slot bench rendered as a brown vertical column to the left of the field. The bench is unrestricted — any player can go on any bench slot, no eligibility check, no team check. Dragging a bench player onto another bench slot swaps them.
 
-**Lineup:** 17 starting + 6 bench + 1 emergency, one team, owned by one user. Users can have many.
+**Position eligibility:** Each player has a list of field positions they're allowed to fill (e.g., `[1, 2, 5]` means fullback or either wing). The app enforces this by default for positions 1–13. A **loose mode** toggle per lineup disables the rule for "what if a prop played fullback" scenarios. Loose mode does not affect the bench (which has no eligibility rule to disable).
+
+**Lineup:** 13 field starters + 6 bench, one team, owned by one user. Users can have many.
 
 **Snapshot:** When a lineup is shared, player data is frozen into a separate record. Later edits don't change the share.
 
@@ -46,7 +48,7 @@ React 18 on Vite. Plain JavaScript — **no TypeScript**. CSS Modules for stylin
 src/
   domain/
     types.js          ← JSDoc-only documentation of data shapes
-    rules.js          ← five pure rule functions
+    rules.js          ← four pure rule functions
     seedPlayers.js    ← hardcoded 56-player array (deleted in Phase 2)
   components/         ← React components, grouped by feature
   pages/              ← top-level route components
