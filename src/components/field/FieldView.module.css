@@ -1,0 +1,56 @@
+.field {
+  position: relative;
+  width: min(560px, 75vw);
+  aspect-ratio: 68 / 100;
+  background: linear-gradient(180deg, #1f6e3d 0%, #185f33 100%);
+  border: 2px solid rgba(255, 255, 255, 0.35);
+  border-radius: 10px;
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.45);
+  overflow: hidden;
+}
+
+.halfwayLine {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: rgba(255, 255, 255, 0.35);
+}
+
+.position {
+  position: absolute;
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  background: rgba(15, 30, 20, 0.55);
+  border: 2px solid rgba(255, 255, 255, 0.7);
+  color: #f5f5f5;
+  font-weight: 600;
+  font-size: 1.05rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transform: translate(-50%, -50%);
+  transition: transform 80ms ease, background 80ms ease, border-color 80ms ease;
+}
+
+.filled {
+  background: rgba(40, 90, 150, 0.85);
+  border-color: rgba(255, 255, 255, 0.9);
+}
+
+.over {
+  background: rgba(255, 200, 80, 0.4);
+  border-color: rgba(255, 200, 80, 0.95);
+  transform: translate(-50%, -50%) scale(1.1);
+}
+
+.playerName {
+  font-size: 0.7rem;
+  text-align: center;
+  padding: 0 2px;
+  line-height: 1.05;
+  word-break: break-word;
+  overflow: hidden;
+}
