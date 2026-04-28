@@ -1,20 +1,24 @@
+import { categoryOf } from './categories.js'
+
 /**
  * Pure rule functions. No React, no DOM, no storage.
  * See docs/rule-functions-spec.md for the full spec and test-case tables.
  *
- * Position model: 1–13 are field positions (eligibility-checked).
+ * Position model: 1–13 are field positions (eligibility-checked by category).
  *                 14–19 are bench (unrestricted).
  */
 
 /**
- * @param {{ eligiblePositions: number[] }} player
+ * @param {{ eligibleCategories: string[] }} player
  * @param {number} position  1..13 — bench drops do not use this function.
  * @param {boolean} looseMode
  * @returns {boolean}
  */
 export function canPlayerFillPosition(player, position, looseMode) {
   if (looseMode) return true
-  return player.eligiblePositions.includes(position)
+  const category = categoryOf(position)
+  if (!category) return false
+  return player.eligibleCategories.includes(category)
 }
 
 /**

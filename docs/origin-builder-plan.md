@@ -18,8 +18,8 @@ Built solo, for around 50 friends to use. Not a public product. Not monetised.
 | Area | Decision |
 |---|---|
 | Player pool | 28 fictional players per team, hardcoded as a JS array initially, moved to Supabase in Phase 2 |
-| Player fields | name, club, eligible positions, photo (silhouette only in v1), rating (0–99) |
-| Position eligibility | Per-player array of allowed position numbers (1–13 only). Lineup-level "loose mode" toggle disables the restriction for field positions. |
+| Player fields | name, club, eligible categories, photo (silhouette only in v1), rating (0–99) |
+| Position categories | Three categories group the field positions: **Backs** (1–5), **Halves** (6–7), **Forwards** (8–13). Each player has one or more eligible categories. Lineup-level "loose mode" toggle disables the restriction for field positions. |
 | Squad size per lineup | 13 field positions + 6-slot bench (positions 14–19). Bench is unrestricted — any player can go on any bench slot, no eligibility or team check. Bench-to-bench drags swap players. |
 | Team per lineup | One — NSW or QLD chosen at creation, immutable thereafter |
 | Field style | FIFA/Football Manager formation view (flat stylized; design handled separately) |
@@ -89,7 +89,7 @@ No TypeScript, but the data shapes still need to be agreed. Documented in JSDoc-
   name: "Jarrah Whitlock",            // string
   club: "Sydney Harbourhawks",        // string
   team: "NSW",                        // "NSW" or "QLD"
-  eligiblePositions: [1],             // array of integers in 1..13
+  eligibleCategories: ["backs"],     // subset of ["backs","halves","forwards"]
   rating: 92,                         // integer 0..99
   photoUrl: null,                     // ignored in v1; silhouette rendered regardless
 }

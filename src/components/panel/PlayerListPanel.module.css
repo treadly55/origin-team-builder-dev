@@ -33,6 +33,37 @@
   color: rgba(255, 255, 255, 0.5);
 }
 
+.filters {
+  display: flex;
+  gap: 6px;
+  margin: 0 4px 12px;
+}
+
+.chip {
+  flex: 1;
+  padding: 6px 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  background: transparent;
+  color: rgba(255, 255, 255, 0.55);
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  cursor: pointer;
+  transition: background 80ms ease, color 80ms ease, border-color 80ms ease;
+}
+
+.chip:hover {
+  color: rgba(255, 255, 255, 0.85);
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
+.chipActive {
+  background: rgba(96, 165, 250, 0.18);
+  border-color: rgba(96, 165, 250, 0.55);
+  color: #cfe1ff;
+}
+
 .list {
   list-style: none;
   padding: 0;

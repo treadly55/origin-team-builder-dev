@@ -16,10 +16,15 @@ These shapes aren't enforced by TypeScript — they're documented here and in JS
   id: "p_001",
   name: "Jarrah Whitlock",
   team: "NSW",                       // "NSW" or "QLD"
-  eligiblePositions: [1, 2, 5],       // array of integers in 1..13. Empty array is legal.
+  eligibleCategories: ["backs"],     // subset of ["backs","halves","forwards"]. Empty array is legal.
   rating: 92,
   // ...other fields not used by rules
 }
+
+// Position categories:
+//   "backs"     → positions 1..5
+//   "halves"    → positions 6..7
+//   "forwards"  → positions 8..13
 
 // Lineup
 {
@@ -52,31 +57,33 @@ export function canPlayerFillPosition(player, position, looseMode) { ... }
 
 **Rules:**
 1. If `looseMode` is `true` → return `true`.
-2. Otherwise → return `true` if `player.eligiblePositions` includes `position`, else `false`.
+2. Otherwise → look up the category of `position` (Backs/Halves/Forwards) and return `true` if `player.eligibleCategories` includes that category, else `false`.
 
 **Test cases:**
 
-| # | `eligiblePositions` | `position` | `looseMode` | Expected |
+| # | `eligibleCategories` | `position` | `looseMode` | Expected |
 |---|---|---|---|---|
-| 1 | `[1, 2, 5]` | 1 | `false` | `true` |
-| 2 | `[1, 2, 5]` | 2 | `false` | `true` |
-| 3 | `[1, 2, 5]` | 5 | `false` | `true` |
-| 4 | `[1, 2, 5]` | 3 | `false` | `false` |
-| 5 | `[1, 2, 5]` | 13 | `false` | `false` |
-| 6 | `[1, 2, 5]` | 3 | `true` | `true` (loose) |
-| 7 | `[6]` | 6 | `false` | `true` |
-| 8 | `[6]` | 7 | `false` | `false` |
-| 9 | `[]` | 1 | `false` | `false` |
-| 10 | `[]` | 1 | `true` | `true` |
-| 11 | `[11, 12, 13]` | 11 | `false` | `true` |
-| 12 | `[11, 12, 13]` | 12 | `false` | `true` |
-| 13 | `[11, 12, 13]` | 13 | `false` | `true` |
-| 14 | `[11, 12, 13]` | 8 | `false` | `false` |
+| 1 | `["backs"]` | 1 | `false` | `true` |
+| 2 | `["backs"]` | 5 | `false` | `true` |
+| 3 | `["backs"]` | 6 | `false` | `false` |
+| 4 | `["backs"]` | 8 | `false` | `false` |
+| 5 | `["backs"]` | 6 | `true` | `true` (loose) |
+| 6 | `["halves"]` | 6 | `false` | `true` |
+| 7 | `["halves"]` | 7 | `false` | `true` |
+| 8 | `["halves"]` | 5 | `false` | `false` |
+| 9 | `["forwards"]` | 8 | `false` | `true` |
+| 10 | `["forwards"]` | 13 | `false` | `true` |
+| 11 | `["forwards"]` | 7 | `false` | `false` |
+| 12 | `["backs", "halves"]` | 1 | `false` | `true` |
+| 13 | `["backs", "halves"]` | 6 | `false` | `true` |
+| 14 | `["backs", "halves"]` | 8 | `false` | `false` |
+| 15 | `[]` | 1 | `false` | `false` |
+| 16 | `[]` | 1 | `true` | `true` |
 
 **Manual verification:** open the browser console and run each row, e.g.:
 ```js
-canPlayerFillPosition({ eligiblePositions: [6] }, 6, false)  // expect true
-canPlayerFillPosition({ eligiblePositions: [6] }, 7, false)  // expect false
+canPlayerFillPosition({ eligibleCategories: ["halves"] }, 6, false)  // expect true
+canPlayerFillPosition({ eligibleCategories: ["halves"] }, 5, false)  // expect false
 ```
 
 ---

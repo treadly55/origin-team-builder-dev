@@ -30,7 +30,7 @@ The whole goal of the early milestones is **see a player drag onto a position**.
 
 **Build:** `src/domain/seedPlayers.js` containing the 56-player array (translated from `seed_players.sql`). `src/domain/rules.js` with all four rule functions. Manually verify each function against the test cases in `rule-functions-spec.md` by running them in the browser console once.
 
-**You can see:** Open the browser console on the home page. Type `import('./domain/rules.js').then(r => console.log(r.canPlayerFillPosition({eligiblePositions:[6]}, 6, false)))` — see `true`. Try a few rows from the test tables. (Or expose a simple debug page that runs them and prints results.)
+**You can see:** Open the browser console on the home page. Type `import('./domain/rules.js').then(r => console.log(r.canPlayerFillPosition({eligibleCategories:['halves']}, 6, false)))` — see `true`. Try a few rows from the test tables. (Or expose a simple debug page that runs them and prints results.)
 
 **Done when:** every test case in the rule spec returns the expected value when you check by hand.
 

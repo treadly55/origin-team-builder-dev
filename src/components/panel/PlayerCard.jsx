@@ -1,4 +1,5 @@
 import { useDraggable } from '@dnd-kit/core'
+import { CATEGORY_LABELS } from '../../domain/categories.js'
 import styles from './PlayerCard.module.css'
 
 function Silhouette() {
@@ -33,9 +34,9 @@ export default function PlayerCard({ player, draggable = false }) {
       <div className={styles.body}>
         <p className={styles.name}>{player.name}</p>
         <div className={styles.positions}>
-          {player.eligiblePositions.map((pos) => (
-            <span key={pos} className={styles.posBadge}>
-              {pos}
+          {player.eligibleCategories.map((category) => (
+            <span key={category} className={styles.posBadge}>
+              {CATEGORY_LABELS[category][0]}
             </span>
           ))}
         </div>
