@@ -1,5 +1,5 @@
 .panel {
-  width: 320px;
+  width: 420px;
   flex-shrink: 0;
   height: 100%;
   background: #14181f;
@@ -33,35 +33,76 @@
   color: rgba(255, 255, 255, 0.5);
 }
 
-.filters {
-  display: flex;
-  gap: 6px;
-  margin: 0 4px 12px;
+.searchWrap {
+  margin: 0 4px 10px;
 }
 
-.chip {
-  flex: 1;
-  padding: 6px 10px;
+.search {
+  width: 100%;
+  box-sizing: border-box;
+  appearance: none;
+  background: #1d2330;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 6px;
+  padding: 7px 10px;
+  color: #f0f3f8;
+  font-size: 0.85rem;
+  font-family: inherit;
+  outline: none;
+  transition: border-color 80ms ease, background 80ms ease;
+}
+
+.search::placeholder {
+  color: rgba(255, 255, 255, 0.35);
+}
+
+.search:focus {
+  border-color: rgba(96, 165, 250, 0.55);
+  background: #232a3a;
+}
+
+.categorySwitch {
+  display: flex;
+  gap: 4px;
+  margin: 0 4px 12px;
+  background: rgba(255, 255, 255, 0.05);
+  padding: 4px;
   border-radius: 999px;
-  border: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.categoryButton {
+  flex: 1;
+  appearance: none;
   background: transparent;
-  color: rgba(255, 255, 255, 0.55);
-  font-size: 0.75rem;
+  border: none;
+  color: rgba(255, 255, 255, 0.6);
+  padding: 6px 12px;
+  border-radius: 999px;
+  font-size: 0.78rem;
   font-weight: 600;
   letter-spacing: 0.02em;
   cursor: pointer;
-  transition: background 80ms ease, color 80ms ease, border-color 80ms ease;
+  transition: background 80ms ease, color 80ms ease;
 }
 
-.chip:hover {
-  color: rgba(255, 255, 255, 0.85);
-  border-color: rgba(255, 255, 255, 0.3);
+.categoryButton:hover {
+  color: rgba(255, 255, 255, 0.9);
 }
 
-.chipActive {
-  background: rgba(96, 165, 250, 0.18);
-  border-color: rgba(96, 165, 250, 0.55);
-  color: #cfe1ff;
+.categoryButtonActive {
+  background: rgba(96, 165, 250, 0.85);
+  color: #ffffff;
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.08) inset;
+}
+
+.empty {
+  margin: 16px 4px 0;
+  padding: 12px;
+  border: 1px dashed rgba(255, 255, 255, 0.12);
+  border-radius: 6px;
+  color: rgba(255, 255, 255, 0.45);
+  font-size: 0.82rem;
+  text-align: center;
 }
 
 .list {

@@ -9,6 +9,11 @@ import PlayerCard from '../panel/PlayerCard.jsx'
 import PlayerListPanel from '../panel/PlayerListPanel.jsx'
 import styles from './LineupBuilder.module.css'
 
+const TEAMS = [
+  { id: 'NSW', label: 'NSW Blues' },
+  { id: 'QLD', label: 'QLD Maroons' },
+]
+
 function placePlayerAt(slots, playerId, position) {
   const next = {}
   for (const [pos, pid] of Object.entries(slots)) {
@@ -40,13 +45,15 @@ function swapAt(slots, playerId, fromPosition, toPosition) {
 }
 
 export default function LineupBuilder() {
-  const nswPlayers = useMemo(
-    () => seedPlayers.filter((p) => p.team === 'NSW'),
-    [],
+  const [selectedTeam, setSelectedTeam] = useState('NSW')
+
+  const teamPlayers = useMemo(
+    () => seedPlayers.filter((p) => p.team === selectedTeam),
+    [selectedTeam],
   )
   const playersById = useMemo(
-    () => Object.fromEntries(nswPlayers.map((p) => [p.id, p])),
-    [nswPlayers],
+    () => Object.fromEntries(teamPlayers.map((p) => [p.id, p])),
+    [teamPlayers],
   )
 
   const [slots, setSlots] = useState({})
@@ -59,6 +66,14 @@ export default function LineupBuilder() {
     const timer = setTimeout(() => setError(null), 2500)
     return () => clearTimeout(timer)
   }, [error])
+
+  const handleTeamChange = (teamId) => {
+    if (teamId === selectedTeam) return
+    setSelectedTeam(teamId)
+    setSlots({})
+    setError(null)
+    setActivePlayerId(null)
+  }
 
   const handleDragStart = (event) => {
     setActivePlayerId(event.active.data?.current?.playerId ?? null)
@@ -111,9 +126,11 @@ export default function LineupBuilder() {
   const activePlayer = activePlayerId ? playersById[activePlayerId] : null
 
   const placedPlayerIds = new Set(Object.values(slots))
-  const availablePlayers = nswPlayers.filter(
+  const availablePlayers = teamPlayers.filter(
     (p) => !placedPlayerIds.has(p.id),
   )
+
+  const teamLabel = TEAMS.find((t) => t.id === selectedTeam)?.label ?? ''
 
   return (
     <DndContext
@@ -122,43 +139,76 @@ export default function LineupBuilder() {
       onDragEnd={handleDragEnd}
       onDragCancel={handleDragCancel}
     >
-      <div className={styles.builder}>
-        <PlayerListPanel players={availablePlayers} title="NSW Blues" />
-        <BenchColumn slots={slots} playersById={playersById} />
-        <div className={styles.fieldArea}>
-          <header className={styles.fieldHeader}>
-            <button
-              type="button"
-              onClick={() => setSlots({})}
-              disabled={Object.keys(slots).length === 0}
-            >
-              Clear field
-            </button>
-            <button
-              type="button"
-              className={[
-                styles.looseToggle,
-                looseMode && styles.looseToggleOn,
-              ]
-                .filter(Boolean)
-                .join(' ')}
-              aria-pressed={looseMode}
-              onClick={() => setLooseMode((v) => !v)}
-              title={
-                looseMode
-                  ? 'Loose mode is on — any player can fill any field position. Click to enforce category rules.'
-                  : 'Category rules are on — players must match the position category. Click to allow any player anywhere.'
-              }
-            >
-              <span className={styles.looseDot} aria-hidden="true" />
-              Category rules: {looseMode ? 'off' : 'on'}
-            </button>
-          </header>
-          <FieldView
-            slots={slots}
-            playersById={playersById}
-            looseMode={looseMode}
+      <div className={styles.page}>
+        <header className={styles.pageHeader}>
+          <h1 className={styles.pageTitle}>Origin Team Builder</h1>
+          <div
+            className={styles.teamSwitch}
+            role="radiogroup"
+            aria-label="Select team"
+          >
+            {TEAMS.map((team) => {
+              const active = team.id === selectedTeam
+              const classes = [styles.teamButton]
+              if (active) classes.push(styles.teamButtonActive)
+              if (active) classes.push(styles[`teamButton_${team.id}`])
+              return (
+                <button
+                  key={team.id}
+                  type="button"
+                  role="radio"
+                  aria-checked={active}
+                  className={classes.filter(Boolean).join(' ')}
+                  onClick={() => handleTeamChange(team.id)}
+                >
+                  {team.label}
+                </button>
+              )
+            })}
+          </div>
+        </header>
+        <div className={styles.builder}>
+          <PlayerListPanel
+            key={selectedTeam}
+            players={availablePlayers}
+            title={teamLabel}
           />
+          <BenchColumn slots={slots} playersById={playersById} />
+          <div className={styles.fieldArea}>
+            <header className={styles.fieldHeader}>
+              <button
+                type="button"
+                onClick={() => setSlots({})}
+                disabled={Object.keys(slots).length === 0}
+              >
+                Clear field
+              </button>
+              <button
+                type="button"
+                className={[
+                  styles.looseToggle,
+                  looseMode && styles.looseToggleOn,
+                ]
+                  .filter(Boolean)
+                  .join(' ')}
+                aria-pressed={looseMode}
+                onClick={() => setLooseMode((v) => !v)}
+                title={
+                  looseMode
+                    ? 'Loose mode is on — any player can fill any field position. Click to enforce category rules.'
+                    : 'Category rules are on — players must match the position category. Click to allow any player anywhere.'
+                }
+              >
+                <span className={styles.looseDot} aria-hidden="true" />
+                Category rules: {looseMode ? 'off' : 'on'}
+              </button>
+            </header>
+            <FieldView
+              slots={slots}
+              playersById={playersById}
+              looseMode={looseMode}
+            />
+          </div>
         </div>
       </div>
       {error && (
