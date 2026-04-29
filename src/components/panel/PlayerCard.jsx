@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { useDraggable } from '@dnd-kit/core'
 import { CATEGORY_LABELS } from '../../domain/categories.js'
 import styles from './PlayerCard.module.css'
@@ -12,7 +13,26 @@ function Silhouette() {
   )
 }
 
+function Chevron({ open }) {
+  const classes = [styles.chevron]
+  if (open) classes.push(styles.chevronOpen)
+  return (
+    <svg viewBox="0 0 24 24" className={classes.join(' ')} aria-hidden="true">
+      <path
+        d="M6 9l6 6 6-6"
+        stroke="currentColor"
+        strokeWidth="2"
+        fill="none"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  )
+}
+
 export default function PlayerCard({ player, draggable = false }) {
+  const [expanded, setExpanded] = useState(false)
+
   const { attributes, listeners, setNodeRef, isDragging } = useDraggable({
     id: `panel-${player.id}`,
     data: { playerId: player.id, source: 'panel' },
@@ -22,6 +42,15 @@ export default function PlayerCard({ player, draggable = false }) {
   const classes = [styles.card]
   if (draggable) classes.push(styles.draggable)
   if (isDragging) classes.push(styles.dragging)
+  if (expanded) classes.push(styles.expanded)
+
+  const stopDragActivation = (e) => e.stopPropagation()
+  const toggle = () => setExpanded((v) => !v)
+
+  const categoryNames =
+    player.eligibleCategories.length === 0
+      ? '—'
+      : player.eligibleCategories.map((c) => CATEGORY_LABELS[c]).join(', ')
 
   return (
     <div
@@ -30,18 +59,45 @@ export default function PlayerCard({ player, draggable = false }) {
       {...listeners}
       {...attributes}
     >
-      <Silhouette />
-      <div className={styles.body}>
-        <p className={styles.name}>{player.name}</p>
-        <div className={styles.positions}>
-          {player.eligibleCategories.map((category) => (
-            <span key={category} className={styles.posBadge}>
-              {CATEGORY_LABELS[category][0]}
-            </span>
-          ))}
+      <div className={styles.row}>
+        <Silhouette />
+        <div className={styles.body}>
+          <p className={styles.name}>{player.name}</p>
+          <div className={styles.positions}>
+            {player.eligibleCategories.map((category) => (
+              <span key={category} className={styles.posBadge}>
+                {CATEGORY_LABELS[category][0]}
+              </span>
+            ))}
+          </div>
         </div>
+        <div className={styles.rating}>{player.rating}</div>
+        <button
+          type="button"
+          className={styles.chevronBtn}
+          onClick={toggle}
+          onPointerDown={stopDragActivation}
+          onMouseDown={stopDragActivation}
+          onTouchStart={stopDragActivation}
+          onKeyDown={stopDragActivation}
+          aria-expanded={expanded}
+          aria-label={expanded ? 'Collapse player details' : 'Expand player details'}
+        >
+          <Chevron open={expanded} />
+        </button>
       </div>
-      <div className={styles.rating}>{player.rating}</div>
+      {expanded && (
+        <div className={styles.details}>
+          <div className={styles.detailRow}>
+            <span className={styles.detailLabel}>Club</span>
+            <span className={styles.detailValue}>{player.club}</span>
+          </div>
+          <div className={styles.detailRow}>
+            <span className={styles.detailLabel}>Categories</span>
+            <span className={styles.detailValue}>{categoryNames}</span>
+          </div>
+        </div>
+      )}
     </div>
   )
 }

@@ -1,13 +1,18 @@
 .card {
   display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 10px 12px;
+  flex-direction: column;
   background: #1d2330;
   border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 8px;
   user-select: none;
   touch-action: none;
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
 }
 
 .draggable {
@@ -20,6 +25,10 @@
 
 .dragging {
   opacity: 0.45;
+}
+
+.expanded {
+  background: #232a3a;
 }
 
 .silhouetteWrap {
@@ -80,4 +89,69 @@
   min-width: 36px;
   text-align: center;
   flex-shrink: 0;
+}
+
+.chevronBtn {
+  appearance: none;
+  background: transparent;
+  border: none;
+  padding: 4px;
+  margin: 0;
+  color: rgba(255, 255, 255, 0.55);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  border-radius: 4px;
+}
+
+.chevronBtn:hover {
+  color: rgba(255, 255, 255, 0.9);
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.chevronBtn:focus-visible {
+  outline: 2px solid rgba(120, 170, 255, 0.7);
+  outline-offset: 2px;
+}
+
+.chevron {
+  width: 16px;
+  height: 16px;
+  transition: transform 0.15s ease;
+}
+
+.chevronOpen {
+  transform: rotate(180deg);
+}
+
+.details {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 10px 12px 12px;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  font-size: 0.82rem;
+}
+
+.detailRow {
+  display: flex;
+  gap: 10px;
+  align-items: baseline;
+}
+
+.detailLabel {
+  color: rgba(255, 255, 255, 0.5);
+  flex-shrink: 0;
+  width: 72px;
+  text-transform: uppercase;
+  font-size: 0.68rem;
+  letter-spacing: 0.04em;
+}
+
+.detailValue {
+  color: rgba(255, 255, 255, 0.9);
+  flex: 1;
+  min-width: 0;
 }
