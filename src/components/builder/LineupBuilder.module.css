@@ -8,10 +8,59 @@
 .fieldArea {
   flex: 1;
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
   padding: 24px;
   min-width: 0;
+  gap: 16px;
+}
+
+.fieldHeader {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  width: min(560px, 75vw);
+}
+
+.looseToggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 12px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  background: rgba(255, 255, 255, 0.04);
+  color: rgba(255, 255, 255, 0.75);
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  cursor: pointer;
+  transition: background 80ms ease, color 80ms ease, border-color 80ms ease;
+}
+
+.looseToggle:hover {
+  color: #f1f5fb;
+  border-color: rgba(255, 255, 255, 0.32);
+}
+
+.looseDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: rgba(96, 165, 250, 0.85);
+  box-shadow: 0 0 0 2px rgba(96, 165, 250, 0.18);
+}
+
+.looseToggleOn {
+  background: rgba(255, 170, 80, 0.16);
+  border-color: rgba(255, 170, 80, 0.55);
+  color: #ffd9a8;
+}
+
+.looseToggleOn .looseDot {
+  background: rgba(255, 170, 80, 0.95);
+  box-shadow: 0 0 0 2px rgba(255, 170, 80, 0.22);
 }
 
 .toast {

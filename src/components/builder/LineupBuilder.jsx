@@ -52,6 +52,7 @@ export default function LineupBuilder() {
   const [slots, setSlots] = useState({})
   const [activePlayerId, setActivePlayerId] = useState(null)
   const [error, setError] = useState(null)
+  const [looseMode, setLooseMode] = useState(false)
 
   useEffect(() => {
     if (!error) return
@@ -77,7 +78,7 @@ export default function LineupBuilder() {
       const isBench = position >= 14 && position <= 19
 
       if (!isBench) {
-        if (!canPlayerFillPosition(player, position, false)) {
+        if (!canPlayerFillPosition(player, position, looseMode)) {
           setError({
             message: `${player.name} isn't eligible for position ${position}`,
             id: Date.now(),
@@ -125,7 +126,39 @@ export default function LineupBuilder() {
         <PlayerListPanel players={availablePlayers} title="NSW Blues" />
         <BenchColumn slots={slots} playersById={playersById} />
         <div className={styles.fieldArea}>
-          <FieldView slots={slots} playersById={playersById} />
+          <header className={styles.fieldHeader}>
+            <button
+              type="button"
+              onClick={() => setSlots({})}
+              disabled={Object.keys(slots).length === 0}
+            >
+              Clear field
+            </button>
+            <button
+              type="button"
+              className={[
+                styles.looseToggle,
+                looseMode && styles.looseToggleOn,
+              ]
+                .filter(Boolean)
+                .join(' ')}
+              aria-pressed={looseMode}
+              onClick={() => setLooseMode((v) => !v)}
+              title={
+                looseMode
+                  ? 'Loose mode is on — any player can fill any field position. Click to enforce category rules.'
+                  : 'Category rules are on — players must match the position category. Click to allow any player anywhere.'
+              }
+            >
+              <span className={styles.looseDot} aria-hidden="true" />
+              Category rules: {looseMode ? 'off' : 'on'}
+            </button>
+          </header>
+          <FieldView
+            slots={slots}
+            playersById={playersById}
+            looseMode={looseMode}
+          />
         </div>
       </div>
       {error && (

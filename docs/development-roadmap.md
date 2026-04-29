@@ -82,9 +82,9 @@ The whole goal of the early milestones is **see a player drag onto a position**.
 
 ### 1.11 — Loose mode toggle
 
-**Build:** A toggle button in the header labeled "Position rules" with a short explanation. When off (loose mode active), `canPlayerFillPosition` returns true regardless of eligibility. When loose mode is on, field slot outlines change color so it's always obvious.
+**Build:** A toggle button in the field header labeled "Category rules". When off (loose mode active), `canPlayerFillPosition` returns true regardless of eligibility. When loose mode is on, field slot outlines change color (dashed orange) so it's always obvious.
 
-**You can see:** Flip the toggle. Drag a halfback onto fullback — works now. Slot outlines look different. Toggle back, eligibility returns.
+**You can see:** Flip the toggle. Drag a halves-only player onto a backs position — works now. Slot outlines look different. Toggle back, eligibility returns.
 
 ### 1.12 — Player card expand/collapse
 
