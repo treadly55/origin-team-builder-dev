@@ -50,6 +50,8 @@
 }
 
 .row {
+  display: flex;
+  align-items: stretch;
   background: #1a2030;
   border: 1px solid rgba(255, 255, 255, 0.06);
   border-radius: 8px;
@@ -62,6 +64,8 @@
 }
 
 .rowLink {
+  flex: 1;
+  min-width: 0;
   display: grid;
   grid-template-columns: 1fr auto auto;
   align-items: center;
@@ -69,6 +73,83 @@
   padding: 14px 16px;
   text-decoration: none;
   color: inherit;
+}
+
+.kebabWrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+  padding-right: 8px;
+}
+
+.kebabButton {
+  appearance: none;
+  background: transparent;
+  border: none;
+  width: 32px;
+  height: 32px;
+  border-radius: 6px;
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 1.2rem;
+  line-height: 1;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 80ms ease, color 80ms ease;
+}
+
+.kebabButton:hover {
+  background: rgba(255, 255, 255, 0.06);
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.kebabButton:focus-visible {
+  outline: 2px solid rgba(120, 170, 255, 0.7);
+  outline-offset: 2px;
+}
+
+.menu {
+  position: absolute;
+  top: calc(100% + 4px);
+  right: 0;
+  min-width: 160px;
+  background: #1a2030;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  padding: 4px;
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.55);
+  z-index: 50;
+  display: flex;
+  flex-direction: column;
+}
+
+.menuItem {
+  appearance: none;
+  background: transparent;
+  border: none;
+  text-align: left;
+  padding: 8px 12px;
+  border-radius: 5px;
+  color: rgba(255, 255, 255, 0.85);
+  font-size: 0.88rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 80ms ease, color 80ms ease;
+}
+
+.menuItem:hover {
+  background: rgba(255, 255, 255, 0.07);
+  color: #ffffff;
+}
+
+.menuItemDestructive {
+  color: rgba(245, 130, 130, 0.95);
+}
+
+.menuItemDestructive:hover {
+  background: rgba(180, 60, 60, 0.18);
+  color: rgba(255, 170, 170, 1);
 }
 
 .rowName {
@@ -225,8 +306,33 @@
   cursor: not-allowed;
 }
 
+.dialogDestructive {
+  appearance: none;
+  border: none;
+  padding: 8px 14px;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  background: rgba(180, 60, 60, 0.9);
+  color: #ffffff;
+  transition: background 80ms ease;
+}
+
+.dialogDestructive:hover {
+  background: rgba(200, 70, 70, 0.95);
+}
+
+.dialogBody {
+  margin: 0 0 16px;
+  font-size: 0.88rem;
+  line-height: 1.4;
+  color: rgba(255, 255, 255, 0.65);
+}
+
 .dialogCancel:focus-visible,
-.dialogPrimary:focus-visible {
+.dialogPrimary:focus-visible,
+.dialogDestructive:focus-visible {
   outline: 2px solid rgba(120, 170, 255, 0.7);
   outline-offset: 2px;
 }
