@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { DndContext, DragOverlay } from '@dnd-kit/core'
 import { seedPlayers } from '../../domain/seedPlayers.js'
 import { canPlayerFillPosition } from '../../domain/rules.js'
@@ -44,8 +44,14 @@ function swapAt(slots, playerId, fromPosition, toPosition) {
   return next
 }
 
-export default function LineupBuilder() {
-  const [selectedTeam, setSelectedTeam] = useState('NSW')
+export default function LineupBuilder({ initialLineup, onChange }) {
+  const isPreview = initialLineup.id == null
+
+  const [selectedTeam, setSelectedTeam] = useState(initialLineup.team)
+  const [slots, setSlots] = useState(initialLineup.slots ?? {})
+  const [activePlayerId, setActivePlayerId] = useState(null)
+  const [error, setError] = useState(null)
+  const [pendingTeamSwitch, setPendingTeamSwitch] = useState(null)
 
   const teamPlayers = useMemo(
     () => seedPlayers.filter((p) => p.team === selectedTeam),
@@ -56,23 +62,50 @@ export default function LineupBuilder() {
     [teamPlayers],
   )
 
-  const [slots, setSlots] = useState({})
-  const [activePlayerId, setActivePlayerId] = useState(null)
-  const [error, setError] = useState(null)
-
   useEffect(() => {
     if (!error) return
     const timer = setTimeout(() => setError(null), 2500)
     return () => clearTimeout(timer)
   }, [error])
 
-  const handleTeamChange = (teamId) => {
+  const isFirstRenderRef = useRef(true)
+  useEffect(() => {
+    if (isFirstRenderRef.current) {
+      isFirstRenderRef.current = false
+      return
+    }
+    if (!onChange) return
+    onChange({ ...initialLineup, team: selectedTeam, slots })
+  }, [slots, selectedTeam])
+
+  const handleTeamClick = (teamId) => {
     if (teamId === selectedTeam) return
-    setSelectedTeam(teamId)
+    if (Object.keys(slots).length > 0) {
+      setPendingTeamSwitch(teamId)
+    } else {
+      setSelectedTeam(teamId)
+    }
+  }
+
+  const confirmTeamSwitch = () => {
+    if (!pendingTeamSwitch) return
     setSlots({})
+    setSelectedTeam(pendingTeamSwitch)
     setError(null)
     setActivePlayerId(null)
+    setPendingTeamSwitch(null)
   }
+
+  const cancelTeamSwitch = () => setPendingTeamSwitch(null)
+
+  useEffect(() => {
+    if (!pendingTeamSwitch) return
+    const onKeyDown = (e) => {
+      if (e.key === 'Escape') cancelTeamSwitch()
+    }
+    window.addEventListener('keydown', onKeyDown)
+    return () => window.removeEventListener('keydown', onKeyDown)
+  }, [pendingTeamSwitch])
 
   const handleDragStart = (event) => {
     setActivePlayerId(event.active.data?.current?.playerId ?? null)
@@ -130,6 +163,8 @@ export default function LineupBuilder() {
   )
 
   const teamLabel = TEAMS.find((t) => t.id === selectedTeam)?.label ?? ''
+  const pendingTeamLabel =
+    TEAMS.find((t) => t.id === pendingTeamSwitch)?.label ?? ''
 
   return (
     <DndContext
@@ -141,30 +176,41 @@ export default function LineupBuilder() {
       <div className={styles.page}>
         <header className={styles.pageHeader}>
           <h1 className={styles.pageTitle}>Origin Team Builder</h1>
-          <div
-            className={styles.teamSwitch}
-            role="radiogroup"
-            aria-label="Select team"
-          >
-            {TEAMS.map((team) => {
-              const active = team.id === selectedTeam
-              const classes = [styles.teamButton]
-              if (active) classes.push(styles.teamButtonActive)
-              if (active) classes.push(styles[`teamButton_${team.id}`])
-              return (
-                <button
-                  key={team.id}
-                  type="button"
-                  role="radio"
-                  aria-checked={active}
-                  className={classes.filter(Boolean).join(' ')}
-                  onClick={() => handleTeamChange(team.id)}
-                >
-                  {team.label}
-                </button>
-              )
-            })}
-          </div>
+          {isPreview ? (
+            <div
+              className={styles.teamSwitch}
+              role="radiogroup"
+              aria-label="Select team"
+            >
+              {TEAMS.map((team) => {
+                const active = team.id === selectedTeam
+                const classes = [styles.teamButton]
+                if (active) classes.push(styles.teamButtonActive)
+                if (active) classes.push(styles[`teamButton_${team.id}`])
+                return (
+                  <button
+                    key={team.id}
+                    type="button"
+                    role="radio"
+                    aria-checked={active}
+                    className={classes.filter(Boolean).join(' ')}
+                    onClick={() => handleTeamClick(team.id)}
+                  >
+                    {team.label}
+                  </button>
+                )
+              })}
+            </div>
+          ) : (
+            <span
+              className={[
+                styles.teamLabel,
+                styles[`teamLabel_${selectedTeam}`],
+              ].join(' ')}
+            >
+              {teamLabel}
+            </span>
+          )}
         </header>
         <div className={styles.builder}>
           <PlayerListPanel
@@ -190,6 +236,45 @@ export default function LineupBuilder() {
       {error && (
         <div className={styles.toast} role="status">
           {error.message}
+        </div>
+      )}
+      {pendingTeamSwitch && (
+        <div
+          className={styles.dialogOverlay}
+          onClick={cancelTeamSwitch}
+          role="presentation"
+        >
+          <div
+            className={styles.dialog}
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="team-switch-title"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <h2 id="team-switch-title" className={styles.dialogTitle}>
+              Switch to {pendingTeamLabel}?
+            </h2>
+            <p className={styles.dialogBody}>
+              The players you've placed will be cleared. This can't be undone.
+            </p>
+            <div className={styles.dialogActions}>
+              <button
+                type="button"
+                onClick={cancelTeamSwitch}
+                className={styles.dialogCancel}
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                onClick={confirmTeamSwitch}
+                className={styles.dialogDiscard}
+                autoFocus
+              >
+                Discard and switch
+              </button>
+            </div>
+          </div>
         </div>
       )}
       <DragOverlay>
