@@ -22,7 +22,7 @@ function lastName(fullName) {
   return parts[parts.length - 1]
 }
 
-function PositionCircle({ position, player, looseMode }) {
+function PositionCircle({ position, player }) {
   const droppable = useDroppable({
     id: `pos-${position.number}`,
     data: { kind: 'position', position: position.number },
@@ -42,7 +42,6 @@ function PositionCircle({ position, player, looseMode }) {
 
   const classes = [styles.position]
   if (player) classes.push(styles.filled)
-  if (looseMode) classes.push(styles.loose)
   if (droppable.isOver) classes.push(styles.over)
   if (draggable.isDragging) classes.push(styles.dragging)
 
@@ -66,11 +65,7 @@ function PositionCircle({ position, player, looseMode }) {
   )
 }
 
-export default function FieldView({
-  slots = {},
-  playersById = {},
-  looseMode = false,
-}) {
+export default function FieldView({ slots = {}, playersById = {} }) {
   return (
     <div className={styles.field}>
       <div className={styles.halfwayLine} />
@@ -79,7 +74,6 @@ export default function FieldView({
           key={p.number}
           position={p}
           player={slots[p.number] ? playersById[slots[p.number]] : null}
-          looseMode={looseMode}
         />
       ))}
     </div>

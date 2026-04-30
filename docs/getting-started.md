@@ -32,7 +32,7 @@ State of Origin is an annual three-match rugby league series between two Austral
 
 **Bench (positions 14–19):** A 6-slot bench rendered as a brown vertical column to the left of the field. The bench is unrestricted — any player can go on any bench slot, no eligibility check, no team check. Dragging a bench player onto another bench slot swaps them.
 
-**Position eligibility:** Each player has a list of field positions they're allowed to fill (e.g., `[1, 2, 5]` means fullback or either wing). The app enforces this by default for positions 1–13. A **loose mode** toggle per lineup disables the rule for "what if a prop played fullback" scenarios. Loose mode does not affect the bench (which has no eligibility rule to disable).
+**Position eligibility:** Each player has a list of eligible position categories (e.g., `["backs"]` means they can fill any of positions 1–5). The app enforces this for field positions 1–13. The bench has no eligibility rule. A per-lineup loose-mode override is deferred — see the roadmap's "Deferred / post-launch" section.
 
 **Lineup:** 13 field starters + 6 bench, one team, owned by one user. Users can have many.
 

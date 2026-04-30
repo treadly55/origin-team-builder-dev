@@ -80,11 +80,9 @@ The whole goal of the early milestones is **see a player drag onto a position**.
 
 **You can see:** You don't need pixel-perfect drops anymore. Get close, the player snaps in. The target slot lights up to confirm.
 
-### 1.11 — Loose mode toggle
+### 1.11 — _Deferred (was: Loose mode toggle)_
 
-**Build:** A toggle button in the field header labeled "Category rules". When off (loose mode active), `canPlayerFillPosition` returns true regardless of eligibility. When loose mode is on, field slot outlines change color (dashed orange) so it's always obvious.
-
-**You can see:** Flip the toggle. Drag a halves-only player onto a backs position — works now. Slot outlines look different. Toggle back, eligibility returns.
+The category-rules override is deferred to post-launch. See "Deferred / post-launch" at the bottom of this doc. The number is kept so commit history (`1.11 loose mode toggle…`) still maps to a roadmap entry. Subsequent items keep their numbers.
 
 ### 1.12 — Player card expand/collapse
 
@@ -241,3 +239,17 @@ A checklist of quality improvements. None strictly depend on each other.
 **Build:** Click through every flow. File and fix bugs.
 
 **You can see:** Ready to share with the first real users.
+
+---
+
+## Deferred / post-launch
+
+Items intentionally pulled out of the launch path. Code for these has been stripped from the codebase — when a feature here returns, recover its starting point from git history rather than rebuilding from a stale comment.
+
+### Loose mode (was 1.11)
+
+A per-lineup override that disables position-category eligibility, for "what if a prop played fullback" scenarios. Originally planned as a toggle in the field header that, when on, made field slot outlines dashed-orange and short-circuited `canPlayerFillPosition` to always return `true`.
+
+**Why deferred:** simpler product surface for launch — users get the standard rules without an extra mode to explain. The eligibility logic itself stays in `rules.js` (just without the override flag).
+
+**To revive:** the original implementation shipped in commit `66492d2`. Re-introducing it means: re-add the `looseMode` boolean to the `Lineup` data shape, restore the optional argument on `canPlayerFillPosition`, restore the toggle button in the builder header, and restore the `.loose` slot styling on the field. The shape of the change is small.

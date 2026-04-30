@@ -43,15 +43,6 @@
   cursor: grab;
 }
 
-.loose {
-  border-color: rgba(255, 170, 80, 0.9);
-  border-style: dashed;
-}
-
-.loose.filled {
-  border-color: rgba(255, 170, 80, 0.95);
-}
-
 .filled:active {
   cursor: grabbing;
 }

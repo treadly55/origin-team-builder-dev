@@ -11,11 +11,9 @@ import { categoryOf } from './categories.js'
 /**
  * @param {{ eligibleCategories: string[] }} player
  * @param {number} position  1..13 — bench drops do not use this function.
- * @param {boolean} looseMode
  * @returns {boolean}
  */
-export function canPlayerFillPosition(player, position, looseMode) {
-  if (looseMode) return true
+export function canPlayerFillPosition(player, position) {
   const category = categoryOf(position)
   if (!category) return false
   return player.eligibleCategories.includes(category)
@@ -69,7 +67,7 @@ export function isLineupValid(lineup, playersById) {
     if (player.team !== lineup.team) {
       errors.push({ kind: 'wrong_team_player', playerId: slot.playerId, location })
     }
-    if (!canPlayerFillPosition(player, slot.position, lineup.looseMode)) {
+    if (!canPlayerFillPosition(player, slot.position)) {
       errors.push({
         kind: 'ineligible_player',
         position: slot.position,

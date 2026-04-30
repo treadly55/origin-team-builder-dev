@@ -59,7 +59,6 @@ export default function LineupBuilder() {
   const [slots, setSlots] = useState({})
   const [activePlayerId, setActivePlayerId] = useState(null)
   const [error, setError] = useState(null)
-  const [looseMode, setLooseMode] = useState(false)
 
   useEffect(() => {
     if (!error) return
@@ -93,7 +92,7 @@ export default function LineupBuilder() {
       const isBench = position >= 14 && position <= 19
 
       if (!isBench) {
-        if (!canPlayerFillPosition(player, position, looseMode)) {
+        if (!canPlayerFillPosition(player, position)) {
           setError({
             message: `${player.name} isn't eligible for position ${position}`,
             id: Date.now(),
@@ -183,31 +182,8 @@ export default function LineupBuilder() {
               >
                 Clear field
               </button>
-              <button
-                type="button"
-                className={[
-                  styles.looseToggle,
-                  looseMode && styles.looseToggleOn,
-                ]
-                  .filter(Boolean)
-                  .join(' ')}
-                aria-pressed={looseMode}
-                onClick={() => setLooseMode((v) => !v)}
-                title={
-                  looseMode
-                    ? 'Loose mode is on — any player can fill any field position. Click to enforce category rules.'
-                    : 'Category rules are on — players must match the position category. Click to allow any player anywhere.'
-                }
-              >
-                <span className={styles.looseDot} aria-hidden="true" />
-                Category rules: {looseMode ? 'off' : 'on'}
-              </button>
             </header>
-            <FieldView
-              slots={slots}
-              playersById={playersById}
-              looseMode={looseMode}
-            />
+            <FieldView slots={slots} playersById={playersById} />
           </div>
         </div>
       </div>

@@ -73,7 +73,6 @@ export const localStorageBackend = {
       id: newId(),
       team,
       name,
-      looseMode: false,
       slots: {},
       version: 1,
       createdAt: timestamp,

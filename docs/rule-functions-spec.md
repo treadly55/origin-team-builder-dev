@@ -30,7 +30,7 @@ These shapes aren't enforced by TypeScript — they're documented here and in JS
 {
   id: "l_abc123",
   team: "NSW",                        // "NSW" or "QLD"
-  looseMode: false,                   // boolean
+  // looseMode field deferred — see development-roadmap.md "Deferred / post-launch"
   slots: [                            // length 19, one entry per position
     { position: 1,  playerId: "p_001" },
     { position: 2,  playerId: null },
@@ -50,40 +50,39 @@ These shapes aren't enforced by TypeScript — they're documented here and in JS
 ## Function 1 — `canPlayerFillPosition`
 
 ```js
-export function canPlayerFillPosition(player, position, looseMode) { ... }
+export function canPlayerFillPosition(player, position) { ... }
 ```
+
+> The `looseMode` override has been deferred — see development-roadmap.md "Deferred / post-launch". When the feature returns, the third argument and its associated test cases come back with it.
 
 **What it decides:** whether a given player is allowed to be placed at a given **field** position (1–13). Bench drops do not pass through this function.
 
 **Rules:**
-1. If `looseMode` is `true` → return `true`.
-2. Otherwise → look up the category of `position` (Backs/Halves/Forwards) and return `true` if `player.eligibleCategories` includes that category, else `false`.
+1. Look up the category of `position` (Backs/Halves/Forwards) and return `true` if `player.eligibleCategories` includes that category, else `false`.
 
 **Test cases:**
 
-| # | `eligibleCategories` | `position` | `looseMode` | Expected |
-|---|---|---|---|---|
-| 1 | `["backs"]` | 1 | `false` | `true` |
-| 2 | `["backs"]` | 5 | `false` | `true` |
-| 3 | `["backs"]` | 6 | `false` | `false` |
-| 4 | `["backs"]` | 8 | `false` | `false` |
-| 5 | `["backs"]` | 6 | `true` | `true` (loose) |
-| 6 | `["halves"]` | 6 | `false` | `true` |
-| 7 | `["halves"]` | 7 | `false` | `true` |
-| 8 | `["halves"]` | 5 | `false` | `false` |
-| 9 | `["forwards"]` | 8 | `false` | `true` |
-| 10 | `["forwards"]` | 13 | `false` | `true` |
-| 11 | `["forwards"]` | 7 | `false` | `false` |
-| 12 | `["backs", "halves"]` | 1 | `false` | `true` |
-| 13 | `["backs", "halves"]` | 6 | `false` | `true` |
-| 14 | `["backs", "halves"]` | 8 | `false` | `false` |
-| 15 | `[]` | 1 | `false` | `false` |
-| 16 | `[]` | 1 | `true` | `true` |
+| # | `eligibleCategories` | `position` | Expected |
+|---|---|---|---|
+| 1 | `["backs"]` | 1 | `true` |
+| 2 | `["backs"]` | 5 | `true` |
+| 3 | `["backs"]` | 6 | `false` |
+| 4 | `["backs"]` | 8 | `false` |
+| 5 | `["halves"]` | 6 | `true` |
+| 6 | `["halves"]` | 7 | `true` |
+| 7 | `["halves"]` | 5 | `false` |
+| 8 | `["forwards"]` | 8 | `true` |
+| 9 | `["forwards"]` | 13 | `true` |
+| 10 | `["forwards"]` | 7 | `false` |
+| 11 | `["backs", "halves"]` | 1 | `true` |
+| 12 | `["backs", "halves"]` | 6 | `true` |
+| 13 | `["backs", "halves"]` | 8 | `false` |
+| 14 | `[]` | 1 | `false` |
 
 **Manual verification:** open the browser console and run each row, e.g.:
 ```js
-canPlayerFillPosition({ eligibleCategories: ["halves"] }, 6, false)  // expect true
-canPlayerFillPosition({ eligibleCategories: ["halves"] }, 5, false)  // expect false
+canPlayerFillPosition({ eligibleCategories: ["halves"] }, 6)  // expect true
+canPlayerFillPosition({ eligibleCategories: ["halves"] }, 5)  // expect false
 ```
 
 ---
@@ -152,7 +151,7 @@ export function isLineupValid(lineup, playersById) { ... }
 **What it decides:** is the lineup in a legal state right now? Reports all errors, not just the first.
 
 **Rules:**
-1. **Field 1–13:** a player there fails if `canPlayerFillPosition(player, position, lineup.looseMode)` is `false` → `ineligible_player` error.
+1. **Field 1–13:** a player there fails if `canPlayerFillPosition(player, position)` is `false` → `ineligible_player` error.
 2. **Field 1–13:** a player whose `team` doesn't match `lineup.team` → `wrong_team_player` error.
 3. **Bench 14–19:** no team check, no eligibility check.
 4. **All slots:** any player appearing more than once → one `duplicate_player` error listing all locations.
@@ -166,15 +165,14 @@ export function isLineupValid(lineup, playersById) { ... }
 |---|---|---|
 | 1 | Empty lineup (all null) | `{ valid: true, errors: [] }` |
 | 2 | All 13 field filled with eligible same-team players | `{ valid: true, errors: [] }` |
-| 3 | Player `[6]`-only at position 3, strict | `valid: false`, one `ineligible_player` for pos 3 |
-| 4 | Same as #3 but `looseMode: true` | `{ valid: true, errors: [] }` |
-| 5 | Player `[6]`-only at position 15 (bench) | `{ valid: true, errors: [] }` (bench unrestricted) |
-| 6 | Same `"p1"` at position 1 AND position 2 | one `duplicate_player`, both slots listed |
-| 7 | Same `"p1"` at position 1 AND on bench (pos 14) | one `duplicate_player`, both locations |
-| 8 | QLD player in NSW lineup at field position 3 | one `wrong_team_player` |
-| 9 | QLD player in NSW lineup at bench position 14 | `{ valid: true, errors: [] }` (bench unrestricted) |
-| 10 | One ineligible AND one duplicate | two errors |
-| 11 | playerId in slot but missing from `playersById` | `{ valid: true, errors: [] }` (treated as empty) |
+| 3 | Player `[6]`-only at position 3 | `valid: false`, one `ineligible_player` for pos 3 |
+| 4 | Player `[6]`-only at position 15 (bench) | `{ valid: true, errors: [] }` (bench unrestricted) |
+| 5 | Same `"p1"` at position 1 AND position 2 | one `duplicate_player`, both slots listed |
+| 6 | Same `"p1"` at position 1 AND on bench (pos 14) | one `duplicate_player`, both locations |
+| 7 | QLD player in NSW lineup at field position 3 | one `wrong_team_player` |
+| 8 | QLD player in NSW lineup at bench position 14 | `{ valid: true, errors: [] }` (bench unrestricted) |
+| 9 | One ineligible AND one duplicate | two errors |
+| 10 | playerId in slot but missing from `playersById` | `{ valid: true, errors: [] }` (treated as empty) |
 
 ---
 

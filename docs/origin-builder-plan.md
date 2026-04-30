@@ -19,7 +19,7 @@ Built solo, for around 50 friends to use. Not a public product. Not monetised.
 |---|---|
 | Player pool | 28 fictional players per team, hardcoded as a JS array initially, moved to Supabase in Phase 2 |
 | Player fields | name, club, eligible categories, photo (silhouette only in v1), rating (0–99) |
-| Position categories | Three categories group the field positions: **Backs** (1–5), **Halves** (6–7), **Forwards** (8–13). Each player has one or more eligible categories. Lineup-level "loose mode" toggle disables the restriction for field positions. |
+| Position categories | Three categories group the field positions: **Backs** (1–5), **Halves** (6–7), **Forwards** (8–13). Each player has one or more eligible categories. Eligibility is enforced for field positions; bench is unrestricted. (A lineup-level "loose mode" override is deferred — see roadmap "Deferred / post-launch".) |
 | Squad size per lineup | 13 field positions + 6-slot bench (positions 14–19). Bench is unrestricted — any player can go on any bench slot, no eligibility or team check. Bench-to-bench drags swap players. |
 | Team per lineup | One — NSW or QLD chosen at creation, immutable thereafter |
 | Field style | FIFA/Football Manager formation view (flat stylized; design handled separately) |
@@ -103,7 +103,7 @@ No TypeScript, but the data shapes still need to be agreed. Documented in JSDoc-
   id: "l_abc123",                    // string, unique
   team: "NSW",                        // "NSW" or "QLD" — immutable after creation
   name: "My Origin I lineup",         // string
-  looseMode: false,                   // boolean
+  // looseMode field deferred — see roadmap "Deferred / post-launch"
   slots: [
     { position: 1,  playerId: "p_001" },
     { position: 2,  playerId: "p_003" },
@@ -144,7 +144,7 @@ Four pure JavaScript functions live in `src/domain/rules.js`. They take inputs a
 
 ```js
 // src/domain/rules.js
-export function canPlayerFillPosition(player, position, looseMode) { ... }
+export function canPlayerFillPosition(player, position) { ... }
 export function findPlayerPlacement(lineup, playerId) { ... }
 export function isLineupComplete(lineup) { ... }
 export function isLineupValid(lineup, playersById) { ... }
