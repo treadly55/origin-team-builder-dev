@@ -1,0 +1,232 @@
+.page {
+  width: 100%;
+  min-height: 100vh;
+  padding: 32px 24px;
+  box-sizing: border-box;
+  max-width: 880px;
+  margin: 0 auto;
+}
+
+.pageHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.pageTitle {
+  font-size: 1.4rem;
+  font-weight: 700;
+  margin: 0;
+  color: #f0f3f8;
+}
+
+.newButton {
+  appearance: none;
+  border: none;
+  background: rgba(96, 165, 250, 0.85);
+  color: #ffffff;
+  padding: 8px 16px;
+  border-radius: 999px;
+  font-size: 0.88rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 80ms ease;
+  letter-spacing: 0.02em;
+}
+
+.newButton:hover {
+  background: rgba(96, 165, 250, 1);
+}
+
+.list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.row {
+  background: #1a2030;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 8px;
+  transition: background 80ms ease, border-color 80ms ease;
+}
+
+.row:hover {
+  background: #202738;
+  border-color: rgba(255, 255, 255, 0.12);
+}
+
+.rowLink {
+  display: grid;
+  grid-template-columns: 1fr auto auto;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 16px;
+  text-decoration: none;
+  color: inherit;
+}
+
+.rowName {
+  font-size: 0.98rem;
+  font-weight: 600;
+  color: #f0f3f8;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.rowDate {
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 0.82rem;
+  white-space: nowrap;
+}
+
+.teamPill {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  color: #ffffff;
+}
+
+.teamPill_NSW {
+  background: rgba(46, 113, 217, 0.85);
+}
+
+.teamPill_QLD {
+  background: rgba(150, 36, 70, 0.9);
+}
+
+.fieldLabel {
+  display: block;
+  margin-bottom: 6px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.6);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.input {
+  width: 100%;
+  box-sizing: border-box;
+  appearance: none;
+  background: #232a3a;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 6px;
+  padding: 9px 12px;
+  color: #f0f3f8;
+  font-size: 0.95rem;
+  font-family: inherit;
+  outline: none;
+  margin-bottom: 18px;
+  transition: border-color 80ms ease, background 80ms ease;
+}
+
+.input::placeholder {
+  color: rgba(255, 255, 255, 0.3);
+}
+
+.input:focus {
+  border-color: rgba(96, 165, 250, 0.55);
+  background: #2a3142;
+}
+
+.teamSwitch {
+  display: flex;
+  gap: 4px;
+  background: rgba(255, 255, 255, 0.05);
+  padding: 4px;
+  border-radius: 999px;
+  margin-bottom: 22px;
+}
+
+.teamButton {
+  flex: 1;
+  appearance: none;
+  background: transparent;
+  border: none;
+  color: rgba(255, 255, 255, 0.6);
+  padding: 7px 14px;
+  border-radius: 999px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  cursor: pointer;
+  transition: background 80ms ease, color 80ms ease;
+}
+
+.teamButton:hover {
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.teamButtonActive {
+  color: #ffffff;
+}
+
+.teamButton_NSW.teamButtonActive {
+  background: rgba(46, 113, 217, 0.85);
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.08) inset;
+}
+
+.teamButton_QLD.teamButtonActive {
+  background: rgba(150, 36, 70, 0.9);
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.08) inset;
+}
+
+.dialogActions {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+}
+
+.dialogCancel,
+.dialogPrimary {
+  appearance: none;
+  border: none;
+  padding: 8px 14px;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 80ms ease, color 80ms ease, opacity 80ms ease;
+}
+
+.dialogCancel {
+  background: transparent;
+  color: rgba(255, 255, 255, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+}
+
+.dialogCancel:hover {
+  color: #ffffff;
+  border-color: rgba(255, 255, 255, 0.35);
+}
+
+.dialogPrimary {
+  background: rgba(96, 165, 250, 0.85);
+  color: #ffffff;
+}
+
+.dialogPrimary:hover {
+  background: rgba(96, 165, 250, 1);
+}
+
+.dialogPrimary:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.dialogCancel:focus-visible,
+.dialogPrimary:focus-visible {
+  outline: 2px solid rgba(120, 170, 255, 0.7);
+  outline-offset: 2px;
+}

@@ -110,34 +110,6 @@
   background: rgba(150, 36, 70, 0.9);
 }
 
-.dialogOverlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(8, 12, 18, 0.65);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 1100;
-  padding: 16px;
-  backdrop-filter: blur(2px);
-}
-
-.dialog {
-  width: 100%;
-  max-width: 380px;
-  background: #1a2030;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 10px;
-  padding: 20px;
-  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.5);
-}
-
-.dialogTitle {
-  margin: 0 0 8px;
-  font-size: 1.05rem;
-  color: #f0f3f8;
-}
-
 .dialogBody {
   margin: 0 0 16px;
   font-size: 0.88rem;

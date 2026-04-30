@@ -4,6 +4,7 @@ import { seedPlayers } from '../../domain/seedPlayers.js'
 import { canPlayerFillPosition } from '../../domain/rules.js'
 import { magneticCollision } from '../../lib/dnd/magneticCollision.js'
 import BenchColumn from '../bench/BenchColumn.jsx'
+import Modal from '../common/Modal.jsx'
 import FieldView from '../field/FieldView.jsx'
 import PlayerCard from '../panel/PlayerCard.jsx'
 import PlayerListPanel from '../panel/PlayerListPanel.jsx'
@@ -97,15 +98,6 @@ export default function LineupBuilder({ initialLineup, onChange }) {
   }
 
   const cancelTeamSwitch = () => setPendingTeamSwitch(null)
-
-  useEffect(() => {
-    if (!pendingTeamSwitch) return
-    const onKeyDown = (e) => {
-      if (e.key === 'Escape') cancelTeamSwitch()
-    }
-    window.addEventListener('keydown', onKeyDown)
-    return () => window.removeEventListener('keydown', onKeyDown)
-  }, [pendingTeamSwitch])
 
   const handleDragStart = (event) => {
     setActivePlayerId(event.active.data?.current?.playerId ?? null)
@@ -238,45 +230,32 @@ export default function LineupBuilder({ initialLineup, onChange }) {
           {error.message}
         </div>
       )}
-      {pendingTeamSwitch && (
-        <div
-          className={styles.dialogOverlay}
-          onClick={cancelTeamSwitch}
-          role="presentation"
-        >
-          <div
-            className={styles.dialog}
-            role="dialog"
-            aria-modal="true"
-            aria-labelledby="team-switch-title"
-            onClick={(e) => e.stopPropagation()}
+      <Modal
+        open={!!pendingTeamSwitch}
+        onClose={cancelTeamSwitch}
+        title={`Switch to ${pendingTeamLabel}?`}
+      >
+        <p className={styles.dialogBody}>
+          The players you've placed will be cleared. This can't be undone.
+        </p>
+        <div className={styles.dialogActions}>
+          <button
+            type="button"
+            onClick={cancelTeamSwitch}
+            className={styles.dialogCancel}
           >
-            <h2 id="team-switch-title" className={styles.dialogTitle}>
-              Switch to {pendingTeamLabel}?
-            </h2>
-            <p className={styles.dialogBody}>
-              The players you've placed will be cleared. This can't be undone.
-            </p>
-            <div className={styles.dialogActions}>
-              <button
-                type="button"
-                onClick={cancelTeamSwitch}
-                className={styles.dialogCancel}
-              >
-                Cancel
-              </button>
-              <button
-                type="button"
-                onClick={confirmTeamSwitch}
-                className={styles.dialogDiscard}
-                autoFocus
-              >
-                Discard and switch
-              </button>
-            </div>
-          </div>
+            Cancel
+          </button>
+          <button
+            type="button"
+            onClick={confirmTeamSwitch}
+            className={styles.dialogDiscard}
+            autoFocus
+          >
+            Discard and switch
+          </button>
         </div>
-      )}
+      </Modal>
       <DragOverlay>
         {activePlayer ? <PlayerCard player={activePlayer} /> : null}
       </DragOverlay>
