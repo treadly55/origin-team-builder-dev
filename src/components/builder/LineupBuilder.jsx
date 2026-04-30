@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
+import { Link } from 'react-router-dom'
 import { DndContext, DragOverlay } from '@dnd-kit/core'
 import { seedPlayers } from '../../domain/seedPlayers.js'
 import { canPlayerFillPosition } from '../../domain/rules.js'
@@ -167,7 +168,16 @@ export default function LineupBuilder({ initialLineup, onChange }) {
     >
       <div className={styles.page}>
         <header className={styles.pageHeader}>
-          <h1 className={styles.pageTitle}>Origin Team Builder</h1>
+          <div className={styles.headerLeft}>
+            <Link to="/dashboard" className={styles.dashboardLink}>
+              ← Dashboard
+            </Link>
+            <h1 className={styles.pageTitle}>
+              {isPreview
+                ? 'Origin Team Builder'
+                : initialLineup.name || 'Untitled lineup'}
+            </h1>
+          </div>
           {isPreview ? (
             <div
               className={styles.teamSwitch}
