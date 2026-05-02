@@ -90,7 +90,11 @@ No TypeScript, but the data shapes still need to be agreed. Documented in JSDoc-
   club: "Sydney Harbourhawks",        // string
   team: "NSW",                        // "NSW" or "QLD"
   eligibleCategories: ["backs"],     // subset of ["backs","halves","forwards"]
-  rating: 92,                         // integer 0..99
+  rating: 92,                         // integer 0..99 (overall — independent of stats)
+  speed: 78,                          // integer 0..99
+  endurance: 72,                      // integer 0..99
+  defence: 65,                        // integer 0..99
+  workrate: 81,                       // integer 0..99
   photoUrl: null,                     // ignored in v1; silhouette rendered regardless
 }
 ```

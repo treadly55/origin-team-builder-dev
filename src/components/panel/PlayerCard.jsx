@@ -96,6 +96,24 @@ export default function PlayerCard({ player, draggable = false }) {
             <span className={styles.detailLabel}>Categories</span>
             <span className={styles.detailValue}>{categoryNames}</span>
           </div>
+          <div className={styles.statsGrid}>
+            <div className={styles.statCell}>
+              <span className={styles.statLabel}>Speed</span>
+              <span className={styles.statValue}>{player.speed}</span>
+            </div>
+            <div className={styles.statCell}>
+              <span className={styles.statLabel}>End</span>
+              <span className={styles.statValue}>{player.endurance}</span>
+            </div>
+            <div className={styles.statCell}>
+              <span className={styles.statLabel}>Def</span>
+              <span className={styles.statValue}>{player.defence}</span>
+            </div>
+            <div className={styles.statCell}>
+              <span className={styles.statLabel}>Work</span>
+              <span className={styles.statValue}>{player.workrate}</span>
+            </div>
+          </div>
         </div>
       )}
     </div>

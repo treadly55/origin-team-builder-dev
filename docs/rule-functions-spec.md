@@ -18,6 +18,7 @@ These shapes aren't enforced by TypeScript — they're documented here and in JS
   team: "NSW",                       // "NSW" or "QLD"
   eligibleCategories: ["backs"],     // subset of ["backs","halves","forwards"]. Empty array is legal.
   rating: 92,
+  speed: 78, endurance: 72, defence: 65, workrate: 81,  // integers 0..99 — display only, not used by rules
   // ...other fields not used by rules
 }
 
