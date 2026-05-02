@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import { DndContext, DragOverlay } from '@dnd-kit/core'
 import { seedPlayers } from '../../domain/seedPlayers.js'
 import { canPlayerFillPosition } from '../../domain/rules.js'
+import { autoFillSlots } from '../../domain/autoFill.js'
 import { magneticCollision } from '../../lib/dnd/magneticCollision.js'
 import BenchColumn from '../bench/BenchColumn.jsx'
 import Modal from '../common/Modal.jsx'
@@ -54,6 +55,7 @@ export default function LineupBuilder({ initialLineup, onChange }) {
   const [activePlayerId, setActivePlayerId] = useState(null)
   const [error, setError] = useState(null)
   const [pendingTeamSwitch, setPendingTeamSwitch] = useState(null)
+  const [showAutoFillConfirm, setShowAutoFillConfirm] = useState(false)
 
   const teamPlayers = useMemo(
     () => seedPlayers.filter((p) => p.team === selectedTeam),
@@ -99,6 +101,38 @@ export default function LineupBuilder({ initialLineup, onChange }) {
   }
 
   const cancelTeamSwitch = () => setPendingTeamSwitch(null)
+
+  const runAutoFill = () => {
+    const result = autoFillSlots(teamPlayers)
+    if (!result.ok) {
+      const parts = Object.entries(result.missing)
+        .map(([cat, n]) => `${n} ${cat}`)
+        .join(', ')
+      setError({
+        message: `Not enough players rated 75–99 to auto-fill (need ${parts})`,
+        id: Date.now(),
+      })
+      return
+    }
+    setSlots(result.slots)
+    setError(null)
+    setActivePlayerId(null)
+  }
+
+  const handleAutoFillClick = () => {
+    if (Object.keys(slots).length > 0) {
+      setShowAutoFillConfirm(true)
+    } else {
+      runAutoFill()
+    }
+  }
+
+  const confirmAutoFill = () => {
+    setShowAutoFillConfirm(false)
+    runAutoFill()
+  }
+
+  const cancelAutoFill = () => setShowAutoFillConfirm(false)
 
   const handleDragStart = (event) => {
     setActivePlayerId(event.active.data?.current?.playerId ?? null)
@@ -223,6 +257,9 @@ export default function LineupBuilder({ initialLineup, onChange }) {
           <BenchColumn slots={slots} playersById={playersById} />
           <div className={styles.fieldArea}>
             <header className={styles.fieldHeader}>
+              <button type="button" onClick={handleAutoFillClick}>
+                Auto-fill
+              </button>
               <button
                 type="button"
                 onClick={() => setSlots({})}
@@ -240,6 +277,33 @@ export default function LineupBuilder({ initialLineup, onChange }) {
           {error.message}
         </div>
       )}
+      <Modal
+        open={showAutoFillConfirm}
+        onClose={cancelAutoFill}
+        title="Replace current lineup?"
+      >
+        <p className={styles.dialogBody}>
+          Auto-fill will clear all placed players and pick new ones at random
+          from the 75–99 rating pool.
+        </p>
+        <div className={styles.dialogActions}>
+          <button
+            type="button"
+            onClick={cancelAutoFill}
+            className={styles.dialogCancel}
+          >
+            Cancel
+          </button>
+          <button
+            type="button"
+            onClick={confirmAutoFill}
+            className={styles.dialogDiscard}
+            autoFocus
+          >
+            Clear and auto-fill
+          </button>
+        </div>
+      </Modal>
       <Modal
         open={!!pendingTeamSwitch}
         onClose={cancelTeamSwitch}
