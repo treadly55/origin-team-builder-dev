@@ -3,12 +3,13 @@
  * category. Player eligibility is enforced at the category level.
  */
 
-export const CATEGORIES = ['backs', 'halves', 'forwards']
+export const CATEGORIES = ['backs', 'halves', 'forwards', 'utility']
 
 export const CATEGORY_LABELS = {
   backs: 'Backs',
   halves: 'Halves',
   forwards: 'Forwards',
+  utility: 'Utility',
 }
 
 export const POSITION_CATEGORY = {

@@ -19,7 +19,7 @@ Built solo, for around 50 friends to use. Not a public product. Not monetised.
 |---|---|
 | Player pool | 28 fictional players per team, hardcoded as a JS array initially, moved to Supabase in Phase 2 |
 | Player fields | name, club, eligible categories, photo (silhouette only in v1), rating (0–99) |
-| Position categories | Three categories group the field positions: **Backs** (1–5), **Halves** (6–7), **Forwards** (8–13). Each player has one or more eligible categories. Eligibility is enforced for field positions; bench is unrestricted. (A lineup-level "loose mode" override is deferred — see roadmap "Deferred / post-launch".) |
+| Position categories | Three position-bound categories group the field positions: **Backs** (1–5), **Halves** (6–7), **Forwards** (8–13). A fourth player-only category, **Utility**, is not tied to any slot — a utility player is eligible for every field position. Each player has one or more eligible categories. Eligibility is enforced for field positions; bench is unrestricted. (A lineup-level "loose mode" override is deferred — see roadmap "Deferred / post-launch".) |
 | Squad size per lineup | 13 field positions + 6-slot bench (positions 14–19). Bench is unrestricted — any player can go on any bench slot, no eligibility or team check. Bench-to-bench drags swap players. |
 | Team per lineup | One — NSW or QLD chosen at creation, immutable thereafter |
 | Field style | FIFA/Football Manager formation view (flat stylized; design handled separately) |
@@ -89,7 +89,7 @@ No TypeScript, but the data shapes still need to be agreed. Documented in JSDoc-
   name: "Jarrah Whitlock",            // string
   club: "Sydney Harbourhawks",        // string
   team: "NSW",                        // "NSW" or "QLD"
-  eligibleCategories: ["backs"],     // subset of ["backs","halves","forwards"]
+  eligibleCategories: ["backs"],     // subset of ["backs","halves","forwards","utility"] — 'utility' grants any field position
   rating: 92,                         // integer 0..99 (overall — independent of stats)
   speed: 78,                          // integer 0..99
   endurance: 72,                      // integer 0..99

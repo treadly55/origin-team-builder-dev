@@ -4,7 +4,7 @@
  * @property {string} name
  * @property {string} club
  * @property {"NSW"|"QLD"} team
- * @property {Array<"backs"|"halves"|"forwards">} eligibleCategories  Subset of CATEGORIES. May be empty.
+ * @property {Array<"backs"|"halves"|"forwards"|"utility">} eligibleCategories  Subset of CATEGORIES. May be empty. 'utility' grants eligibility for any field position.
  * @property {number} rating  0..99
  * @property {number} speed  0..99
  * @property {number} endurance  0..99
@@ -16,7 +16,7 @@
 /** @type {Player[]} */
 export const seedPlayers = [
   // ---------------------------------------------------------------------
-  // NSW Blues (56)
+  // NSW Blues (58)
   // ---------------------------------------------------------------------
 
   // Fullbacks
@@ -95,8 +95,12 @@ export const seedPlayers = [
   { id: 'p_083', name: 'Boon Kelekolio',    club: 'Penrith Ironhawks',      team: 'NSW', eligibleCategories: ['forwards'],         rating: 69, speed: 15, endurance: 77, defence: 46, workrate:  9, photoUrl: null },
   { id: 'p_084', name: 'Wolfe Mariota',     club: 'Newcastle Surge',        team: 'NSW', eligibleCategories: ['forwards'],         rating: 67, speed: 24, endurance: 94, defence: 14, workrate: 60, photoUrl: null },
 
+  // Utility (true all-rounders — eligible for any field position)
+  { id: 'p_085', name: 'Indy Hauraki',      club: 'Sydney Harbourhawks',    team: 'NSW', eligibleCategories: ['utility'],          rating: 86, speed: 73, endurance: 22, defence:  1, workrate: 44, photoUrl: null },
+  { id: 'p_086', name: 'Rio Tetauira',      club: 'Penrith Ironhawks',      team: 'NSW', eligibleCategories: ['utility'],          rating: 78, speed: 12, endurance: 58, defence: 82, workrate: 93, photoUrl: null },
+
   // ---------------------------------------------------------------------
-  // QLD Maroons (28)
+  // QLD Maroons (30)
   // ---------------------------------------------------------------------
 
   // Fullbacks
@@ -146,4 +150,8 @@ export const seedPlayers = [
   { id: 'p_054', name: 'Thierry Labuschagne', club: 'Gold Coast Rays',      team: 'QLD', eligibleCategories: ['backs'],            rating: 71, speed: 24, endurance: 54, defence: 61, workrate: 90, photoUrl: null },
   { id: 'p_055', name: 'Barnaby Tualau',    club: 'Ipswich Pioneers',       team: 'QLD', eligibleCategories: ['forwards'],         rating: 73, speed: 84, endurance: 47, defence: 40, workrate: 66, photoUrl: null },
   { id: 'p_056', name: 'Xavier Ngawati',    club: 'Brisbane Thunderhawks',  team: 'QLD', eligibleCategories: ['forwards'],         rating: 69, speed: 54, endurance: 74, defence: 78, workrate: 40, photoUrl: null },
+
+  // Utility (true all-rounders — eligible for any field position)
+  { id: 'p_087', name: 'Kalani Ngata',      club: 'Brisbane Thunderhawks',  team: 'QLD', eligibleCategories: ['utility'],          rating: 84, speed: 22, endurance: 64, defence: 97, workrate: 75, photoUrl: null },
+  { id: 'p_088', name: 'Sione Vaitohi',     club: 'Gold Coast Rays',        team: 'QLD', eligibleCategories: ['utility'],          rating: 71, speed: 57, endurance: 98, defence: 65, workrate: 53, photoUrl: null },
 ]

@@ -24,6 +24,12 @@ export function autoFillSlots(players, { min = 75, max = 99 } = {}) {
   const pool = { backs: [], halves: [], forwards: [] }
   for (const p of players) {
     if (p.rating < min || p.rating > max) continue
+    if (p.eligibleCategories.includes('utility')) {
+      pool.backs.push(p.id)
+      pool.halves.push(p.id)
+      pool.forwards.push(p.id)
+      continue
+    }
     for (const cat of p.eligibleCategories) {
       if (cat in pool) pool[cat].push(p.id)
     }

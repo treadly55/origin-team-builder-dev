@@ -16,6 +16,7 @@ import { categoryOf } from './categories.js'
 export function canPlayerFillPosition(player, position) {
   const category = categoryOf(position)
   if (!category) return false
+  if (player.eligibleCategories.includes('utility')) return true
   return player.eligibleCategories.includes(category)
 }
 

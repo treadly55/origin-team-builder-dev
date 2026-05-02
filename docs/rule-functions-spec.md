@@ -16,7 +16,7 @@ These shapes aren't enforced by TypeScript — they're documented here and in JS
   id: "p_001",
   name: "Jarrah Whitlock",
   team: "NSW",                       // "NSW" or "QLD"
-  eligibleCategories: ["backs"],     // subset of ["backs","halves","forwards"]. Empty array is legal.
+  eligibleCategories: ["backs"],     // subset of ["backs","halves","forwards","utility"]. Empty array is legal. 'utility' grants eligibility for any field position.
   rating: 92,
   speed: 78, endurance: 72, defence: 65, workrate: 81,  // integers 0..99 — display only, not used by rules
   // ...other fields not used by rules
@@ -26,6 +26,7 @@ These shapes aren't enforced by TypeScript — they're documented here and in JS
 //   "backs"     → positions 1..5
 //   "halves"    → positions 6..7
 //   "forwards"  → positions 8..13
+//   "utility"   → not tied to any slot; on a player it means "eligible for any field position"
 
 // Lineup
 {
@@ -79,6 +80,10 @@ export function canPlayerFillPosition(player, position) { ... }
 | 12 | `["backs", "halves"]` | 6 | `true` |
 | 13 | `["backs", "halves"]` | 8 | `false` |
 | 14 | `[]` | 1 | `false` |
+| 15 | `["utility"]` | 1 | `true` |
+| 16 | `["utility"]` | 6 | `true` |
+| 17 | `["utility"]` | 8 | `true` |
+| 18 | `["utility"]` | 13 | `true` |
 
 **Manual verification:** open the browser console and run each row, e.g.:
 ```js
@@ -159,6 +164,7 @@ export function isLineupValid(lineup, playersById) { ... }
 5. Missing player references (playerId not in `playersById`) → treated as "no player placed", not an error.
 6. Empty slots are not errors.
 7. `valid` is `true` iff `errors` is empty.
+8. **Utility players** (`eligibleCategories` includes `"utility"`) never trigger `ineligible_player` at any field position — they are eligible everywhere.
 
 **Test cases:**
 
