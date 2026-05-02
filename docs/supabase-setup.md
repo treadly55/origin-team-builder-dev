@@ -1,12 +1,17 @@
 # Supabase setup — step-by-step
 
-A click-by-click guide for standing up the Supabase project this app needs (Phase 2.1). Follow it once for **dev** now, again later for **prod** when there's something to launch.
+Two paths in this doc:
+
+1. **Quick path (Milestone 2.0 — smoke test).** ~30 minutes. One table, no RLS, no auth. Just enough to prove that the app can read and write to Supabase end-to-end. **Local-only — do not deploy this state.**
+2. **Full path (Milestone 2.1 — production-shaped).** ~2 hours. Two tables, RLS, auth URL config. What goes live.
+
+The quick path is a stepping stone, not a parallel option. Do quick first to flush out the connection plumbing, then come back and walk the full path before the first deploy.
 
 This doc reflects the decisions locked on 2026-05-02:
 
 - Hosted Supabase project (no local CLI / Docker)
 - Email + password auth only
-- Two tables (`players`, `lineups`) — sharing is parked
+- Two tables (`players`, `lineups`) at launch — sharing is parked
 - Conflict detection is parked
 - Free tier is sufficient for everything Phase 2 needs
 
@@ -19,6 +24,125 @@ If anything below stops matching the Supabase web UI (Supabase changes its dashb
 - A Supabase account. Sign up at <https://supabase.com> with GitHub OAuth (one click) or email + password.
 - A strong password generator handy. You'll need to save one DB password.
 - This repo cloned locally with `npm install` already run.
+
+---
+
+# Quick path (Milestone 2.0 — smoke test)
+
+Goal: prove that the app can talk to Supabase. One table, RLS off, no auth, no `players` table, no `owner_id`. Once you can `insert` + `select` from the browser console, this milestone is done and you move to the full path.
+
+> **⚠️ Security caveat.** With RLS off and a public anon key, anyone who knows the project URL has full read/write to the table. **Do not deploy this state to Netlify.** Local dev only. The full path (Milestone 2.1) restores RLS before anything goes live.
+
+## Q1 — Create the project
+
+1. <https://supabase.com/dashboard> → **New project**
+2. **Name:** `origin-builder-dev`
+3. **Database password:** generate, save in password manager
+4. **Region:** `Sydney (ap-southeast-2)`
+5. **Plan:** Free
+6. Wait ~2 minutes for provisioning
+
+## Q2 — Grab URL + anon key
+
+**Project Settings → API**:
+- Copy **Project URL** (looks like `https://abcdefghijk.supabase.co`)
+- Copy **anon public key** (`eyJ...` — NOT the service_role key)
+
+## Q3 — Wire `.env` locally
+
+In repo root:
+
+`.env.example` (commit):
+```
+VITE_SUPABASE_URL=
+VITE_SUPABASE_ANON_KEY=
+```
+
+`.env` (gitignored — confirm `.env` is in `.gitignore`):
+```
+VITE_SUPABASE_URL=https://abcdefghijk.supabase.co
+VITE_SUPABASE_ANON_KEY=eyJ...
+```
+
+## Q4 — Create one table, no security
+
+In **SQL Editor → New query**, paste and run:
+
+```sql
+create table lineups (
+  id uuid primary key default gen_random_uuid(),
+  name text not null,
+  team text not null check (team in ('NSW','QLD')),
+  slots jsonb not null,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
+);
+
+-- DEV ONLY: allow anon access without policies. MUST be re-enabled before deploy.
+alter table lineups disable row level security;
+```
+
+> **Why disable RLS instead of writing a permissive policy?** Same effect, but `disable row level security` flags itself loudly in the Supabase dashboard ("RLS is off — your data is publicly accessible"). That nag is a feature: it's the reminder you'll see when you come back to harden things.
+
+## Q5 — Install the client and create a single Supabase module
+
+```bash
+npm install @supabase/supabase-js
+```
+
+Create `src/lib/supabase.js`:
+
+```js
+import { createClient } from '@supabase/supabase-js'
+
+export const supabase = createClient(
+  import.meta.env.VITE_SUPABASE_URL,
+  import.meta.env.VITE_SUPABASE_ANON_KEY,
+)
+
+if (import.meta.env.DEV) {
+  window.supabase = supabase
+}
+```
+
+## Q6 — Smoke-test from the browser console
+
+`npm run dev` → open the app → open the console:
+
+```js
+// insert
+const { data: inserted, error: e1 } = await window.supabase
+  .from('lineups')
+  .insert({ name: 'smoke test', team: 'NSW', slots: {} })
+  .select()
+console.log({ inserted, e1 })
+
+// list
+const { data: rows, error: e2 } = await window.supabase
+  .from('lineups')
+  .select('*')
+console.log({ rows, e2 })
+```
+
+You should see the inserted row come back from the `select`. Confirm in **Supabase Table Editor** that the row exists.
+
+If both errors are `null` and you can see the row in the dashboard, **Milestone 2.0 is done**. Move to the full path below.
+
+### What you have not done yet (intentionally)
+
+| Deferred | Re-paid in |
+|---|---|
+| `players` table + seed | Milestone 2.2 |
+| RLS policies | Milestone 2.1 (Step 5) |
+| `owner_id` column on `lineups` | Milestone 2.1 (Step 4) |
+| Auth wiring | Milestones 2.7 + 2.8 |
+| Wiring Supabase as the *active* storage backend | Milestones 2.3 + 2.4 |
+
+---
+
+# Full path (Milestone 2.1 — production-shaped)
+
+This is the version you walk before the first deploy. Skip Steps 1–3 if you already did them in the quick path — same project, same env vars, same dashboard.
 
 ---
 
@@ -68,7 +192,14 @@ In the repo root:
 
 ## Step 4 — Create the tables
 
-In the Supabase dashboard, click **SQL Editor** in the sidebar, then **New query**. Paste the following block (copied from `docs/origin-builder-plan.md` §9), then click **Run**:
+In the Supabase dashboard, click **SQL Editor** in the sidebar, then **New query**.
+
+> **If you did the quick path:** the `lineups` table already exists but is missing `owner_id` and `version`, and has no `players` table alongside it. Drop and recreate is the simplest path — there's no real data to lose:
+> ```sql
+> drop table if exists lineups;
+> ```
+
+Then paste the following block (copied from `docs/origin-builder-plan.md` §9) and click **Run**:
 
 ```sql
 create table players (

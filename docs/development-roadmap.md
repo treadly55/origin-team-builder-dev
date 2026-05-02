@@ -132,6 +132,16 @@ Slimmed-down Phase 2 (decided 2026-05-02). Goal: solid DB connection + real auth
 
 Order matters: stand up the backend, deploy with a stub user, then add real auth on top of a live deploy. Tests come in alongside the swap, where the seam between localStorage and Supabase makes them earn their keep.
 
+### 2.0 — Smoke test: connect to Supabase (local-only)
+
+**Build:** Walk the **Quick path** in `docs/supabase-setup.md` — create the project, install `@supabase/supabase-js`, create one `lineups` table with RLS off, and prove an `insert` + `select` round-trip works from the browser console. No `players` table, no `owner_id`, no auth, no UI changes — this milestone is plumbing only.
+
+**You can see:** `npm run dev`, paste the smoke-test snippet from the doc into the console, see the row come back from `select` and appear in the Supabase Table Editor.
+
+**Done when:** both error fields return `null` and the row is visible in the dashboard.
+
+> **Local-only.** With RLS off, the anon key + project URL grant full read/write to anyone who has them. Do not deploy this state. Milestone 2.1 hardens it before deploy.
+
 ### 2.1 — Supabase project and schema
 
 **Build:** Supabase project created via the web console (see `docs/supabase-setup.md` for the click-path). Two tables (`players`, `lineups`) created by pasting CREATE TABLE statements from the plan §9. RLS policies applied. `.env.example` committed; `.env` (gitignored) populated locally with the project URL + anon key.

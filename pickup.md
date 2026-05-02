@@ -68,14 +68,15 @@ The 11-question planning conversation was answered on 2026-05-02. This section r
 
 ### Locked Phase 2 milestone order
 
-1. **2.1** — Supabase project + 2-table schema + RLS (`docs/supabase-setup.md`)
-2. **2.2** — Seed 88 players from `seedPlayers.js`
-3. **2.3** — `src/lib/storage/supabaseBackend.js` (not wired)
-4. **2.4** — Swap active backend → Supabase (stub user, no real auth)
-5. **2.5** — **Deploy to Netlify with stub user** (moved up from old 2.8)
-6. **2.6** — Vitest + tests for `rules.js` and storage layer
-7. **2.7** — Real auth (email + password)
-8. **2.8** — Password reset
+1. **2.0** — Smoke test: one table, RLS off, prove `insert/select` round-trip from console (`docs/supabase-setup.md` Quick path) — local-only
+2. **2.1** — Harden: 2-table schema with `owner_id` + `version` + RLS policies (Quick path's `lineups` table gets dropped and recreated)
+3. **2.2** — Seed 88 players from `seedPlayers.js`
+4. **2.3** — `src/lib/storage/supabaseBackend.js` (not wired)
+5. **2.4** — Swap active backend → Supabase (stub user, no real auth)
+6. **2.5** — **Deploy to Netlify with stub user** (moved up from old 2.8)
+7. **2.6** — Vitest + tests for `rules.js` and storage layer
+8. **2.7** — Real auth (email + password)
+9. **2.8** — Password reset
 
 End of Phase 2. From here: Phase 3 polish, or revisit deferred items (sharing, conflict detection, OAuth, localStorage migration).
 
