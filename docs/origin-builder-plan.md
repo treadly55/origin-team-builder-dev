@@ -24,7 +24,7 @@ Built solo, for around 50 friends to use. Not a public product. Not monetised.
 | Team per lineup | One — NSW or QLD chosen at creation, immutable thereafter |
 | Field style | FIFA/Football Manager formation view (flat stylized; design handled separately) |
 | Device | Desktop only in v1 |
-| Sharing | Read-only snapshot link. Player data frozen into snapshot at share time. Phase 2 only. |
+| Sharing | Read-only snapshot link with denormalised player data — **parked for launch** (decided 2026-05-02). Schema kept in §9 for revival; see roadmap "Deferred / post-launch". |
 | Saved lineup content | 19 positions (1–13 field, 14–19 bench) + name + team + timestamps. No notes, no captain/kicker flags. |
 | Dashboard | Simple list: name, team, date modified |
 | Player management | Hardcoded JS array in Phase 1; Supabase Table Editor in Phase 2 |
@@ -36,6 +36,9 @@ Built solo, for around 50 friends to use. Not a public product. Not monetised.
 | Analytics | None |
 | Storage strategy | Local-first. Component state during the MVP, then localStorage, then Supabase in Phase 2 |
 | Auth in Phase 1 | None — single-user assumption. Real auth comes in Phase 2 with Supabase. |
+| Auth in Phase 2 | Supabase Auth, **email + password only** at launch (decided 2026-05-02). OAuth deferred. |
+| Conflict detection | **Parked for launch** (decided 2026-05-02). Last-write-wins is acceptable for ~50 friends; `version` column kept for forward-compat. |
+| Tests | Manual in Phase 1. Phase 2 adds Vitest covering `rules.js` + storage layer (decided 2026-05-02). No Playwright until it earns its keep. |
 
 ## 3. What's deliberately not in the stack
 
@@ -44,7 +47,7 @@ These were considered and cut to keep the app boring and fast to build:
 - **TypeScript** — plain JavaScript + JSX. The app is small enough that type errors will surface quickly via manual testing. Revisit if the codebase grows.
 - **Storybook** — overkill for a solo dev. Components get tested by being used in the actual app.
 - **Tailwind** — replaced by CSS Modules (one `.module.css` file per component, scoped automatically by Vite).
-- **Vitest / Playwright / React Testing Library** — no automated tests in v1. Manual verification is the rule. The rule-functions spec doubles as a manual checklist.
+- **Vitest / Playwright / React Testing Library** — no automated tests in v1. Manual verification is the rule. The rule-functions spec doubles as a manual checklist. Vitest re-enters in Phase 2 (milestone 2.6) for `rules.js` and the storage layer only.
 - **Storybook stories, `data-testid` discipline, `npm run verify` script** — all served the testing strategy. With no tests, all gone.
 - **React Hook Form + Zod** — Phase 2 has a couple of small forms (signup, login, new lineup). Plain HTML form handling is fine.
 - **Pre-Supabase deployment** — no Netlify until there's something worth deploying. Add Netlify when Supabase is being added.
@@ -122,7 +125,9 @@ No TypeScript, but the data shapes still need to be agreed. Documented in JSDoc-
 }
 ```
 
-### SharedLineup (Phase 2 only)
+### SharedLineup (parked — kept for revival)
+
+> Sharing is parked for launch. Shape preserved here so the deferred-section "to revive" instructions stay accurate.
 
 ```js
 // Snapshot — frozen at share time. Player data embedded so future
@@ -172,7 +177,7 @@ export const storage = {
   listPlayers(team)             /* returns Promise<Player[]> */,
   listLineups()                 /* returns Promise<LineupSummary[]> */,
   getLineup(id)                 /* returns Promise<Lineup | null> */,
-  createLineup({ team, name })  /* returns Promise<Lineup> */,
+  createLineup({ team, name, slots? })  /* returns Promise<Lineup>; slots optional, defaults to {} */,
   updateLineup(lineup)          /* returns Promise<Lineup> */,
   duplicateLineup(id)           /* returns Promise<Lineup> */,
   deleteLineup(id)              /* returns Promise<void> */,
@@ -198,17 +203,19 @@ Players in Phase 1 come from a hardcoded JS array (`src/domain/seedPlayers.js`),
 | Route | Purpose | Phase |
 |---|---|---|
 | `/` | Landing — redirects to dashboard if data exists, otherwise prompts to create first lineup | 1 |
-| `/dashboard` | List of saved lineups | 1 |
-| `/lineup/:id` | The team builder | 1 |
-| `/login`, `/signup` | Real auth | 2 |
-| `/share/:slug` | Read-only snapshot view | 2 |
+| `/dashboard` | List of saved lineups. "+ New lineup" navigates to `/lineup/preview` | 1 |
+| `/lineup/preview` | Blank draft builder. Save promotes to a real lineup (collects name in modal) and redirects to `/lineup/:id` | 1 |
+| `/lineup/:id` | The team builder. Autosaves on change (400 ms debounce). Save button flushes pending writes; "Saving…" indicator under the button | 1 |
+| `/login`, `/signup` | Real auth (email + password) | 2 |
+| `/forgot-password`, `/reset-password` | Password reset flow | 2 |
+| `/share/:slug` | Read-only snapshot view — **parked** for launch (see deferred section in roadmap) | — |
 | `/404` | Not found | 1 |
 
 ---
 
 ## 9. Database schema (Phase 2 only — pasted into Supabase dashboard once)
 
-Three tables. Created by pasting `CREATE TABLE` statements into the Supabase SQL editor. No migrations, no CLI tooling.
+**Two tables at launch** (`players`, `lineups`). The `shared_lineups` DDL is kept below behind a parked-features section for when sharing is revived. Created by pasting `CREATE TABLE` statements into the Supabase SQL editor. No migrations, no CLI tooling.
 
 ```sql
 -- Players (managed via Supabase Table Editor)
@@ -217,8 +224,12 @@ create table players (
   name text not null,
   club text not null,
   team text not null check (team in ('NSW','QLD')),
-  eligible_positions int[] not null,
+  eligible_categories text[] not null,    -- subset of {'backs','halves','forwards','utility'}
   rating int not null check (rating between 0 and 99),
+  speed int not null check (speed between 0 and 99),
+  endurance int not null check (endurance between 0 and 99),
+  defence int not null check (defence between 0 and 99),
+  workrate int not null check (workrate between 0 and 99),
   photo_url text,
   updated_at timestamptz not null default now()
 );
@@ -229,14 +240,23 @@ create table lineups (
   owner_id uuid not null references auth.users(id) on delete cascade,
   team text not null check (team in ('NSW','QLD')),
   name text not null,
-  loose_mode boolean not null default false,
   slots jsonb not null,                   -- length 19; 1..13 field, 14..19 bench
-  version int not null default 1,
+  version int not null default 1,         -- kept for forward-compat (conflict detection is parked)
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()
 );
+```
 
--- Shared snapshots
+Row-Level Security:
+- `players`: select = all authenticated users; insert/update/delete = service role only.
+- `lineups`: all ops gated on `owner_id = auth.uid()`.
+
+> **Step-by-step click path:** see `docs/supabase-setup.md` for project creation, region choice, RLS policy snippets, and `.env` wiring.
+
+### Parked: shared_lineups (kept for revival)
+
+```sql
+-- Shared snapshots — DO NOT create at launch. Revive when sharing is unparked.
 create table shared_lineups (
   slug text primary key,
   lineup_id uuid references lineups(id) on delete set null,
@@ -247,12 +267,8 @@ create table shared_lineups (
   snapshot jsonb not null,
   created_at timestamptz not null default now()
 );
+-- RLS: select = anyone (public); insert/delete = owner only.
 ```
-
-Row-Level Security:
-- `players`: select = all authenticated users; insert/update/delete = service role only.
-- `lineups`: all ops gated on `owner_id = auth.uid()`.
-- `shared_lineups`: select = anyone (public); insert/delete = owner only.
 
 ---
 

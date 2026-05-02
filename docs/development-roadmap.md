@@ -126,71 +126,69 @@ The category-rules override is deferred to post-launch. See "Deferred / post-lau
 
 ---
 
-## Phase 2 — Supabase swap, auth, deployment, sharing
+## Phase 2 — Supabase swap, deploy, real auth
 
-Now there's something worth deploying. We add the backend, the things only a backend can do, and put it on Netlify.
+Slimmed-down Phase 2 (decided 2026-05-02). Goal: solid DB connection + real auth on a deployed site. Sharing, conflict detection, OAuth, and localStorage migration are all parked — see "Deferred / post-launch" below.
+
+Order matters: stand up the backend, deploy with a stub user, then add real auth on top of a live deploy. Tests come in alongside the swap, where the seam between localStorage and Supabase makes them earn their keep.
 
 ### 2.1 — Supabase project and schema
 
-**Build:** Supabase project created via the web console. Three tables (`players`, `lineups`, `shared_lineups`) created by pasting CREATE TABLE statements from the plan §9. RLS policies applied. `.env.example` committed.
+**Build:** Supabase project created via the web console (see `docs/supabase-setup.md` for the click-path). Two tables (`players`, `lineups`) created by pasting CREATE TABLE statements from the plan §9. RLS policies applied. `.env.example` committed; `.env` (gitignored) populated locally with the project URL + anon key.
 
-**You can see:** Supabase Table Editor shows three empty tables.
+**You can see:** Supabase Table Editor shows two empty tables. App still runs against localStorage — no behaviour change yet.
 
 ### 2.2 — Seed players in Supabase
 
-**Build:** `seed_players.sql` pasted into the SQL editor. Sanity queries at the bottom run.
+**Build:** Translate `src/domain/seedPlayers.js` (88 players incl. utility) into an INSERT script and run it in the SQL editor. Sanity queries: row counts per team, per category.
 
-**You can see:** 56 player rows in the `players` table. App still uses the local seed.
+**You can see:** Players visible in the Table Editor. App still uses the local seed.
 
-### 2.3 — Supabase storage backend
+### 2.3 — Supabase storage backend (not wired)
 
-**Build:** Implement the storage interface backed by Supabase in `src/lib/storage/supabase.js`. Don't wire it in yet.
+**Build:** Implement the storage interface in `src/lib/storage/supabaseBackend.js`. Mirrors the localStorage backend exactly — same method shapes, all async. Don't wire it in yet.
 
-**You can see:** No UI change.
+**You can see:** No UI change. The new file exists and the methods can be exercised manually via `await import('./lib/storage/supabaseBackend.js')` in the console.
 
-### 2.4 — The swap (no auth yet)
+### 2.4 — The swap (stub user, no real auth)
 
-**Build:** Switch the active backend in `src/lib/storage/index.js` to the Supabase one. `getCurrentUser` continues to return a stubbed dev user — real auth comes next milestone. Players now come from Supabase. Lineups now save to Supabase. Local `.env` configured.
+**Build:** Switch the active backend in `src/lib/storage/index.js` to the Supabase one. `getCurrentUser` returns a hardcoded dev user — real auth lands in 2.7. The localStorage backend file stays in the tree as an inactive fallback. Players now come from Supabase; lineups now save to Supabase.
 
-**You can see:** Build and save a lineup. Open Supabase Table Editor — see the row. Refresh the app — lineup loads from the database. localStorage no longer has lineup keys (only the panel orientation key remains).
+**You can see:** Build and save a lineup. Open the Supabase Table Editor — see the row appear. Refresh the app — lineup loads from the database, not localStorage.
 
-### 2.5 — Real auth
+> **Note on existing localStorage lineups:** abandoned, by design. No migration. Acceptable because there are no real users yet — only MVP test lineups.
 
-**Build:** Stubbed user removed. Add `/login` and `/signup` routes. Supabase Auth wired up. Session persists across refresh. Logout button. Logged-out users hitting `/dashboard` or `/lineup/:id` get redirected to `/login`.
+### 2.5 — Deploy to Netlify (with stub user)
+
+**Build:** `netlify.toml` with SPA fallback (`/* → /index.html 200`). Netlify site created, linked to the repo, auto-deploying from `main`. Env vars (Supabase URL + anon key) set in Netlify site settings. Site lives on `*.netlify.app`.
+
+**You can see:** Visit the live Netlify URL — build a lineup, see it persist in Supabase from the deployed site. Direct-loading `/dashboard` doesn't 404 (SPA fallback works).
+
+> **Why deploy here, not later:** every subsequent feature gets verified against a real deploy environment, not just localhost. Catches "works on my machine" surprises while the surface is small.
+
+### 2.6 — Vitest + tests for rules.js and storage layer
+
+**Build:** Add Vitest. Write a small test suite for `src/domain/rules.js` (drives the test cases already documented in `rule-functions-spec.md`) and the storage layer (smoke tests against both backends — localStorage in jsdom, Supabase via a `.env.test` config or skipped by default).
+
+**You can see:** `npm test` runs green. Tests exist for the four rule functions and for `createLineup` / `updateLineup` / `getLineup` / `listLineups` round-tripping correctly.
+
+> **Why now:** the storage layer is the seam where backends diverge — exactly where automated tests catch real bugs. Rule functions are pure and trivially testable; running them in CI beats running them by hand.
+
+### 2.7 — Real auth (email + password only)
+
+**Build:** Stubbed user removed. Add `/login` and `/signup` routes (Supabase Auth, email + password). Session persists across refresh. Logout button in the dashboard header. Logged-out users hitting `/dashboard` or `/lineup/:id` get redirected to `/login`. `/lineup/preview` remains accessible while logged out (draft-only) — but Save requires login.
 
 **You can see:** Create an account, log out, log back in. Two browsers logged in as the same user see the same lineups. Logged-out users can't see the dashboard.
 
-### 2.6 — Password reset
+> **No OAuth at launch.** Decision 2026-05-02. Add Google/GitHub later if a real user asks.
 
-**Build:** "Forgot password" link on login. Request-reset and reset-password pages using Supabase's built-in flow.
+### 2.8 — Password reset
+
+**Build:** "Forgot password" link on login. Request-reset and reset-password pages using Supabase's built-in flow. Redirect URL configured in Supabase Auth settings to point at the deployed Netlify URL.
 
 **You can see:** Reset a password end-to-end via real email.
 
-### 2.7 — Conflict detection
-
-**Build:** Save requests check the `version` column. Mismatch → 409. ConflictDialog appears: "This lineup was modified elsewhere. Reload to see changes reflected here." Reload (discard local) or Overwrite (force save).
-
-**You can see:** Open the same lineup in two tabs. Save in tab A. Try to save in tab B — dialog appears. Reload in tab B — see tab A's state.
-
-### 2.8 — Deploy to Netlify
-
-**Build:** `netlify.toml` with SPA fallback (`/* → /index.html 200`). Netlify site created, linked to the repo, auto-deploying from `main`. Env vars (Supabase URL + anon key) set in Netlify site settings.
-
-**You can see:** Visit the live Netlify URL — log in, build a lineup, see it persist. Direct-loading `/dashboard` doesn't 404 (SPA fallback works).
-
-### 2.9 — Share link creation and viewing
-
-**Build:** Share button in the builder header opens `ShareDialog`. Creating a link generates a slug and inserts a row in `shared_lineups` with the full denormalised snapshot. Dialog shows the URL with a copy button. `/share/:slug` public route renders the frozen lineup read-only — no drag, no edit.
-
-**You can see:** Create a share link, copy it, open in incognito with no account — the lineup renders correctly.
-
-### 2.10 — Share management and revocation
-
-**Build:** Dashboard indicator shows whether each lineup has an active share. Revoke action deletes the `shared_lineups` row. Revoked slugs return 404.
-
-**You can see:** See which lineups are shared. Revoke a share — link is dead.
-
-**End of Phase 2.** The app does everything it needs to. From here, polish.
+**End of Phase 2.** The app is deployed, has real users, and persists everything in Postgres. From here: polish (Phase 3) or revisit deferred items.
 
 ---
 
@@ -253,3 +251,31 @@ A per-lineup override that disables position-category eligibility, for "what if 
 **Why deferred:** simpler product surface for launch — users get the standard rules without an extra mode to explain. The eligibility logic itself stays in `rules.js` (just without the override flag).
 
 **To revive:** the original implementation shipped in commit `66492d2`. Re-introducing it means: re-add the `looseMode` boolean to the `Lineup` data shape, restore the optional argument on `canPlayerFillPosition`, restore the toggle button in the builder header, and restore the `.loose` slot styling on the field. The shape of the change is small.
+
+### Conflict detection (was 2.7)
+
+Optimistic-concurrency dialog for two-tab edits. Save requests check the `version` column; mismatch → 409 → ConflictDialog with Reload (discard local) or Overwrite (force save).
+
+**Why deferred (decided 2026-05-02):** for ~50 friends, two-tab simultaneous edits on the same lineup are vanishingly rare. Last-write-wins is acceptable for launch. Not worth the dialog code, the 409 path, or the user-education before there's evidence anyone hits it.
+
+**To revive:** the `version` column already exists on `lineups` (kept in the schema for forward-compat). Add the `if-match` check inside `updateLineup` (Supabase PostgREST `Prefer: return=representation` + a `where version = x` predicate), surface the 409 to the caller, and build a `ConflictDialog` component.
+
+### Sharing — read-only public links (was 2.9 + 2.10)
+
+Share button → generates slug → inserts denormalised snapshot into `shared_lineups` → `/share/:slug` renders frozen lineup read-only. Dashboard shows which lineups are shared; revoke deletes the row.
+
+**Why deferred (decided 2026-05-02):** want a solid DB + auth foundation working end-to-end before adding a second data model and a public route. Avoid overcomplicating the first deploy.
+
+**To revive:** add the `shared_lineups` table (DDL kept in plan §9), build `ShareDialog` + the `/share/:slug` public route with its own RLS-bypassed read path, and add the dashboard shared-indicator + revoke action. Snapshots are denormalised (player data embedded at share time) so changes to players or the source lineup don't affect the share.
+
+### OAuth providers (Google / GitHub)
+
+**Why deferred (decided 2026-05-02):** email + password covers the launch audience. OAuth adds identity-management surface area (account linking, provider outages, edge cases at signup) that's not worth the cost before users ask for it.
+
+**To revive:** enable provider in Supabase Auth dashboard, add the OAuth callback redirect URL, add a "Continue with Google" button on `/login` + `/signup`. No code changes to the rest of the app — Supabase Auth normalises the session shape.
+
+### LocalStorage → Supabase migration on first login
+
+**Why deferred (decided 2026-05-02):** no real users yet, only MVP test lineups. The first wave of users will create their lineups directly in Supabase. Existing localStorage data is acceptable to abandon.
+
+**To revive:** on first successful login, check `localStorage` for `origin-builder:lineup:*` keys, prompt the user ("we found N lineups in this browser — claim them?"), and bulk-insert via `createLineup` with `owner_id = auth.uid()`.
