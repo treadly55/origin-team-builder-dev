@@ -1,0 +1,83 @@
+.fieldLabel {
+  display: block;
+  margin-bottom: 6px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.6);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.input {
+  width: 100%;
+  box-sizing: border-box;
+  appearance: none;
+  background: #232a3a;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 6px;
+  padding: 9px 12px;
+  color: #f0f3f8;
+  font-size: 0.95rem;
+  font-family: inherit;
+  outline: none;
+  margin-bottom: 18px;
+  transition: border-color 80ms ease, background 80ms ease;
+}
+
+.input::placeholder {
+  color: rgba(255, 255, 255, 0.3);
+}
+
+.input:focus {
+  border-color: rgba(96, 165, 250, 0.55);
+  background: #2a3142;
+}
+
+.dialogActions {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+}
+
+.dialogCancel,
+.dialogPrimary {
+  appearance: none;
+  border: none;
+  padding: 8px 14px;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 80ms ease, color 80ms ease, opacity 80ms ease;
+}
+
+.dialogCancel {
+  background: transparent;
+  color: rgba(255, 255, 255, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+}
+
+.dialogCancel:hover {
+  color: #ffffff;
+  border-color: rgba(255, 255, 255, 0.35);
+}
+
+.dialogPrimary {
+  background: rgba(96, 165, 250, 0.85);
+  color: #ffffff;
+}
+
+.dialogPrimary:hover {
+  background: rgba(96, 165, 250, 1);
+}
+
+.dialogPrimary:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.dialogCancel:focus-visible,
+.dialogPrimary:focus-visible {
+  outline: 2px solid rgba(120, 170, 255, 0.7);
+  outline-offset: 2px;
+}

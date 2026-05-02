@@ -14,77 +14,6 @@ function teamLabelFor(id) {
   return TEAMS.find((t) => t.id === id)?.label ?? id
 }
 
-function NewLineupForm({ onSubmit, onCancel }) {
-  const [team, setTeam] = useState('NSW')
-  const [name, setName] = useState('')
-  const trimmed = name.trim()
-  const canSubmit = trimmed.length > 0
-
-  const handleSubmit = (e) => {
-    e.preventDefault()
-    if (!canSubmit) return
-    onSubmit({ team, name: trimmed })
-  }
-
-  return (
-    <form onSubmit={handleSubmit}>
-      <label className={styles.fieldLabel} htmlFor="lineup-name">
-        Name
-      </label>
-      <input
-        id="lineup-name"
-        className={styles.input}
-        value={name}
-        onChange={(e) => setName(e.target.value)}
-        placeholder="e.g. Origin I 2026"
-        autoFocus
-        maxLength={80}
-      />
-      <span className={styles.fieldLabel}>Team</span>
-      <div
-        className={styles.teamSwitch}
-        role="radiogroup"
-        aria-label="Select team"
-      >
-        {TEAMS.map((t) => {
-          const active = t.id === team
-          const classes = [styles.teamButton]
-          if (active) classes.push(styles.teamButtonActive)
-          if (active) classes.push(styles[`teamButton_${t.id}`])
-          return (
-            <button
-              key={t.id}
-              type="button"
-              role="radio"
-              aria-checked={active}
-              className={classes.filter(Boolean).join(' ')}
-              onClick={() => setTeam(t.id)}
-            >
-              {t.label}
-            </button>
-          )
-        })}
-      </div>
-      <div className={styles.dialogActions}>
-        <button
-          type="button"
-          onClick={onCancel}
-          className={styles.dialogCancel}
-        >
-          Cancel
-        </button>
-        <button
-          type="submit"
-          disabled={!canSubmit}
-          className={styles.dialogPrimary}
-        >
-          Create
-        </button>
-      </div>
-    </form>
-  )
-}
-
 function RenameForm({ lineup, onSubmit, onCancel }) {
   const [name, setName] = useState(lineup.name)
   const trimmed = name.trim()
@@ -131,7 +60,6 @@ function RenameForm({ lineup, onSubmit, onCancel }) {
 
 export default function DashboardPage() {
   const [lineups, setLineups] = useState(null)
-  const [showNewModal, setShowNewModal] = useState(false)
   const [renaming, setRenaming] = useState(null)
   const [deleting, setDeleting] = useState(null)
   const [openMenuId, setOpenMenuId] = useState(null)
@@ -178,12 +106,6 @@ export default function DashboardPage() {
     }
   }, [openMenuId])
 
-  const handleCreate = async ({ team, name }) => {
-    const lineup = await storage.createLineup({ team, name })
-    setShowNewModal(false)
-    navigate(`/lineup/${lineup.id}`)
-  }
-
   const handleRename = async (newName) => {
     if (!renaming) return
     await storage.updateLineup({ ...renaming, name: newName })
@@ -223,7 +145,7 @@ export default function DashboardPage() {
         <button
           type="button"
           className={styles.newButton}
-          onClick={() => setShowNewModal(true)}
+          onClick={() => navigate('/lineup/preview')}
         >
           + New lineup
         </button>
@@ -301,16 +223,6 @@ export default function DashboardPage() {
           })}
         </ul>
       )}
-      <Modal
-        open={showNewModal}
-        onClose={() => setShowNewModal(false)}
-        title="New lineup"
-      >
-        <NewLineupForm
-          onSubmit={handleCreate}
-          onCancel={() => setShowNewModal(false)}
-        />
-      </Modal>
       <Modal
         open={!!renaming}
         onClose={() => setRenaming(null)}

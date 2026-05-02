@@ -47,7 +47,12 @@ function swapAt(slots, playerId, fromPosition, toPosition) {
   return next
 }
 
-export default function LineupBuilder({ initialLineup, onChange }) {
+export default function LineupBuilder({
+  initialLineup,
+  onChange,
+  onSave,
+  saveState = 'idle',
+}) {
   const isPreview = initialLineup.id == null
 
   const [selectedTeam, setSelectedTeam] = useState(initialLineup.team)
@@ -267,6 +272,23 @@ export default function LineupBuilder({ initialLineup, onChange }) {
               >
                 Clear field
               </button>
+              {onSave && (
+                <div className={styles.saveWrap}>
+                  <button
+                    type="button"
+                    className={styles.saveButton}
+                    onClick={onSave}
+                  >
+                    Save
+                  </button>
+                  <span
+                    className={styles.saveIndicator}
+                    aria-live="polite"
+                  >
+                    {saveState === 'saving' ? 'Saving…' : ''}
+                  </span>
+                </div>
+              )}
             </header>
             <FieldView slots={slots} playersById={playersById} />
           </div>

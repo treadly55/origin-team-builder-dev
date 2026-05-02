@@ -67,13 +67,13 @@ export const localStorageBackend = {
     return readJson(LINEUP_KEY(id), null)
   },
 
-  async createLineup({ team, name }) {
+  async createLineup({ team, name, slots = {} }) {
     const timestamp = nowIso()
     const lineup = {
       id: newId(),
       team,
       name,
-      slots: {},
+      slots,
       version: 1,
       createdAt: timestamp,
       updatedAt: timestamp,
