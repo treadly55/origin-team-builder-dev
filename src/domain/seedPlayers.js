@@ -12,49 +12,72 @@
 /** @type {Player[]} */
 export const seedPlayers = [
   // ---------------------------------------------------------------------
-  // NSW Blues (28)
+  // NSW Blues (56)
   // ---------------------------------------------------------------------
 
   // Fullbacks
   { id: 'p_001', name: 'Jarrah Whitlock',   club: 'Sydney Harbourhawks',    team: 'NSW', eligibleCategories: ['backs'],            rating: 92, photoUrl: null },
   { id: 'p_002', name: 'Coby Mailata',      club: 'Parramatta Rangers',     team: 'NSW', eligibleCategories: ['backs'],            rating: 84, photoUrl: null },
+  { id: 'p_059', name: 'Lennox Whitcombe',  club: 'Manly Marlins',          team: 'NSW', eligibleCategories: ['backs'],            rating: 88, photoUrl: null },
+  { id: 'p_060', name: 'Otis Brennan',      club: 'Wests Titans',           team: 'NSW', eligibleCategories: ['backs'],            rating: 76, photoUrl: null },
 
   // Wingers
   { id: 'p_003', name: 'Rhys Okafor',       club: 'Cronulla Mariners',      team: 'NSW', eligibleCategories: ['backs'],            rating: 89, photoUrl: null },
   { id: 'p_004', name: 'Taj Blackwell',     club: 'Penrith Ironhawks',      team: 'NSW', eligibleCategories: ['backs'],            rating: 87, photoUrl: null },
   { id: 'p_005', name: 'Milo Karamu',       club: 'Newcastle Surge',        team: 'NSW', eligibleCategories: ['backs'],            rating: 82, photoUrl: null },
+  { id: 'p_061', name: 'Atticus Pareora',   club: 'Cronulla Mariners',      team: 'NSW', eligibleCategories: ['backs'],            rating: 85, photoUrl: null },
+  { id: 'p_062', name: 'Vasco Tagaloa',     club: 'St George Dragoons',     team: 'NSW', eligibleCategories: ['backs'],            rating: 80, photoUrl: null },
+  { id: 'p_063', name: 'Cassius Mahoney',   club: 'Penrith Ironhawks',      team: 'NSW', eligibleCategories: ['backs'],            rating: 77, photoUrl: null },
 
   // Centres
   { id: 'p_006', name: 'Declan Moretti',    club: 'Sydney Harbourhawks',    team: 'NSW', eligibleCategories: ['backs'],            rating: 90, photoUrl: null },
   { id: 'p_007', name: 'Ebb Talanoa',       club: 'Manly Marlins',          team: 'NSW', eligibleCategories: ['backs'],            rating: 86, photoUrl: null },
   { id: 'p_008', name: 'Hudson Varga',      club: 'St George Dragoons',     team: 'NSW', eligibleCategories: ['backs'],            rating: 81, photoUrl: null },
+  { id: 'p_064', name: 'Indigo Faiumu',     club: 'Newcastle Surge',        team: 'NSW', eligibleCategories: ['backs'],            rating: 88, photoUrl: null },
+  { id: 'p_065', name: 'Talon Beresford',   club: 'Canterbury Bulldogs XI', team: 'NSW', eligibleCategories: ['backs'],            rating: 83, photoUrl: null },
+  { id: 'p_066', name: 'Quill Henare',      club: 'Sydney Harbourhawks',    team: 'NSW', eligibleCategories: ['backs'],            rating: 78, photoUrl: null },
 
   // Five-Eighth
   { id: 'p_009', name: 'Orson Blakely',     club: 'Penrith Ironhawks',      team: 'NSW', eligibleCategories: ['halves'],           rating: 93, photoUrl: null },
   { id: 'p_010', name: 'Finley Durst',      club: 'Canterbury Bulldogs XI', team: 'NSW', eligibleCategories: ['halves'],           rating: 85, photoUrl: null },
+  { id: 'p_067', name: 'Bodhi McRae',       club: 'Parramatta Rangers',     team: 'NSW', eligibleCategories: ['halves'],           rating: 87, photoUrl: null },
+  { id: 'p_068', name: 'Jett Solomona',     club: 'South Sydney Saints',    team: 'NSW', eligibleCategories: ['halves'],           rating: 76, photoUrl: null },
 
   // Halfback
   { id: 'p_011', name: 'Kai Dimitriou',     club: 'South Sydney Saints',    team: 'NSW', eligibleCategories: ['halves'],           rating: 91, photoUrl: null },
   { id: 'p_012', name: 'Jonty Ellsworth',   club: 'Wests Titans',           team: 'NSW', eligibleCategories: ['halves'],           rating: 83, photoUrl: null },
+  { id: 'p_057', name: 'Beck Holloway',     club: 'Cronulla Mariners',      team: 'NSW', eligibleCategories: ['halves'],           rating: 79, photoUrl: null },
+  { id: 'p_058', name: 'Sully Tamatoa',     club: 'Newcastle Surge',        team: 'NSW', eligibleCategories: ['halves'],           rating: 76, photoUrl: null },
 
   // Props
   { id: 'p_013', name: 'Bomber Huakau',     club: 'Newcastle Surge',        team: 'NSW', eligibleCategories: ['forwards'],         rating: 88, photoUrl: null },
   { id: 'p_014', name: 'Remi Czajkowski',   club: 'Penrith Ironhawks',      team: 'NSW', eligibleCategories: ['forwards'],         rating: 86, photoUrl: null },
   { id: 'p_015', name: "Tane Fotuali'i",    club: 'Parramatta Rangers',     team: 'NSW', eligibleCategories: ['forwards'],         rating: 80, photoUrl: null },
   { id: 'p_016', name: 'Axl Brennan',       club: 'Sydney Harbourhawks',    team: 'NSW', eligibleCategories: ['forwards'],         rating: 75, photoUrl: null },
+  { id: 'p_069', name: 'Mateo Pohatu',      club: 'Wests Titans',           team: 'NSW', eligibleCategories: ['forwards'],         rating: 89, photoUrl: null },
+  { id: 'p_070', name: 'Hawk Kalonji',      club: 'Manly Marlins',          team: 'NSW', eligibleCategories: ['forwards'],         rating: 84, photoUrl: null },
+  { id: 'p_071', name: 'Romeo Sefuiva',     club: 'St George Dragoons',     team: 'NSW', eligibleCategories: ['forwards'],         rating: 79, photoUrl: null },
+  { id: 'p_072', name: 'Knox Beauregard',   club: 'Cronulla Mariners',      team: 'NSW', eligibleCategories: ['forwards'],         rating: 77, photoUrl: null },
 
   // Hooker
   { id: 'p_017', name: 'Wiremu Harlow',     club: 'Manly Marlins',          team: 'NSW', eligibleCategories: ['forwards'],         rating: 90, photoUrl: null },
   { id: 'p_018', name: 'Teddy Ngatai',      club: 'Cronulla Mariners',      team: 'NSW', eligibleCategories: ['forwards'],         rating: 78, photoUrl: null },
+  { id: 'p_073', name: 'Sonny Vainikolo',   club: 'Newcastle Surge',        team: 'NSW', eligibleCategories: ['forwards'],         rating: 86, photoUrl: null },
+  { id: 'p_074', name: 'Pip Tarrant',       club: 'Penrith Ironhawks',      team: 'NSW', eligibleCategories: ['forwards'],         rating: 76, photoUrl: null },
 
   // Second Row
   { id: 'p_019', name: 'Brock Ivanović',    club: 'St George Dragoons',     team: 'NSW', eligibleCategories: ['forwards'],         rating: 89, photoUrl: null },
   { id: 'p_020', name: 'Jaxon Peretola',    club: 'Canterbury Bulldogs XI', team: 'NSW', eligibleCategories: ['forwards'],         rating: 85, photoUrl: null },
   { id: 'p_021', name: 'Huxley Rath',       club: 'South Sydney Saints',    team: 'NSW', eligibleCategories: ['forwards'],         rating: 79, photoUrl: null },
+  { id: 'p_075', name: 'Atlas Mateo',       club: 'Canterbury Bulldogs XI', team: 'NSW', eligibleCategories: ['forwards'],         rating: 87, photoUrl: null },
+  { id: 'p_076', name: 'Cobalt Rangihau',   club: 'Sydney Harbourhawks',    team: 'NSW', eligibleCategories: ['forwards'],         rating: 82, photoUrl: null },
+  { id: 'p_077', name: 'Maverick Liufau',   club: 'Parramatta Rangers',     team: 'NSW', eligibleCategories: ['forwards'],         rating: 76, photoUrl: null },
 
   // Lock
   { id: 'p_022', name: 'Arlo Penitoa',      club: 'Wests Titans',           team: 'NSW', eligibleCategories: ['forwards'],         rating: 87, photoUrl: null },
   { id: 'p_023', name: 'Nikau Delacroix',   club: 'Penrith Ironhawks',      team: 'NSW', eligibleCategories: ['forwards'],         rating: 82, photoUrl: null },
+  { id: 'p_078', name: 'Halcyon Tupaea',    club: 'South Sydney Saints',    team: 'NSW', eligibleCategories: ['forwards'],         rating: 85, photoUrl: null },
+  { id: 'p_079', name: 'Forest Aitumua',    club: 'Wests Titans',           team: 'NSW', eligibleCategories: ['forwards'],         rating: 78, photoUrl: null },
 
   // Fringe / depth
   { id: 'p_024', name: 'Sam Oriti',         club: 'Newcastle Surge',        team: 'NSW', eligibleCategories: ['backs', 'halves'],  rating: 73, photoUrl: null },
@@ -62,6 +85,11 @@ export const seedPlayers = [
   { id: 'p_026', name: 'Perry Sundqvist',   club: 'Parramatta Rangers',     team: 'NSW', eligibleCategories: ['backs'],            rating: 70, photoUrl: null },
   { id: 'p_027', name: 'Mack Ovaltine',     club: 'Cronulla Mariners',      team: 'NSW', eligibleCategories: ['forwards'],         rating: 72, photoUrl: null },
   { id: 'p_028', name: 'Zed Marchetti',     club: 'Sydney Harbourhawks',    team: 'NSW', eligibleCategories: ['forwards'],         rating: 68, photoUrl: null },
+  { id: 'p_080', name: 'River Sefika',      club: 'Manly Marlins',          team: 'NSW', eligibleCategories: ['backs', 'halves'],  rating: 74, photoUrl: null },
+  { id: 'p_081', name: 'Ash Korovata',      club: 'St George Dragoons',     team: 'NSW', eligibleCategories: ['backs'],            rating: 72, photoUrl: null },
+  { id: 'p_082', name: 'Theo Vakauta',      club: 'Cronulla Mariners',      team: 'NSW', eligibleCategories: ['halves'],           rating: 70, photoUrl: null },
+  { id: 'p_083', name: 'Boon Kelekolio',    club: 'Penrith Ironhawks',      team: 'NSW', eligibleCategories: ['forwards'],         rating: 69, photoUrl: null },
+  { id: 'p_084', name: 'Wolfe Mariota',     club: 'Newcastle Surge',        team: 'NSW', eligibleCategories: ['forwards'],         rating: 67, photoUrl: null },
 
   // ---------------------------------------------------------------------
   // QLD Maroons (28)
