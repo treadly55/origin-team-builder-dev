@@ -128,9 +128,15 @@ The category-rules override is deferred to post-launch. See "Deferred / post-lau
 
 ## Phase 2 — Supabase swap, deploy, real auth
 
-Slimmed-down Phase 2 (decided 2026-05-02). Goal: solid DB connection + real auth on a deployed site. Sharing, conflict detection, OAuth, and localStorage migration are all parked — see "Deferred / post-launch" below.
+> **Superseded by `docs/supabase-setup.md`** (post-pivot, decided 2026-05-03).
+> Phase 2 was reorganised into three paths:
+> - **Phase A** — Smoke test (≈ 2.0 below). ✅ Done.
+> - **Phase B** — Single-user real data, no auth, local-only (collapses 2.1–2.4). ✅ Done.
+> - **Phase C** — Auth + deploy + RLS (collapses 2.5, 2.7, 2.8 with deploy moved *after* auth for safety).
+>
+> The 2.0–2.8 milestones below are kept verbatim because commit messages and pickup logs reference them. For the live click-paths and current state, read the setup doc first.
 
-Order matters: stand up the backend, deploy with a stub user, then add real auth on top of a live deploy. Tests come in alongside the swap, where the seam between localStorage and Supabase makes them earn their keep.
+Slimmed-down Phase 2 (original framing, decided 2026-05-02). Goal: solid DB connection + real auth on a deployed site. Sharing, conflict detection, OAuth, and localStorage migration are all parked — see "Deferred / post-launch" below.
 
 ### 2.0 — Smoke test: connect to Supabase (local-only)
 
@@ -284,8 +290,6 @@ Share button → generates slug → inserts denormalised snapshot into `shared_l
 
 **To revive:** enable provider in Supabase Auth dashboard, add the OAuth callback redirect URL, add a "Continue with Google" button on `/login` + `/signup`. No code changes to the rest of the app — Supabase Auth normalises the session shape.
 
-### LocalStorage → Supabase migration on first login
+### ~~LocalStorage → Supabase migration on first login~~ — moot
 
-**Why deferred (decided 2026-05-02):** no real users yet, only MVP test lineups. The first wave of users will create their lineups directly in Supabase. Existing localStorage data is acceptable to abandon.
-
-**To revive:** on first successful login, check `localStorage` for `origin-builder:lineup:*` keys, prompt the user ("we found N lineups in this browser — claim them?"), and bulk-insert via `createLineup` with `owner_id = auth.uid()`.
+Originally deferred (2026-05-02) to keep Phase 2 lean. **No longer applicable.** The localStorage backend was retired in commit `4141347` and the Supabase backend has been the only one since `de3f77f`. There is no localStorage data in any user's browser to migrate — anything that ever existed there was MVP test data on the developer's own machine. Entry kept here for historical context.

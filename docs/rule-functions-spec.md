@@ -187,7 +187,7 @@ export function isLineupValid(lineup, playersById) { ... }
 
 These are not in `rules.js` because they're either UI concerns or state-mutation concerns:
 
-- **Placing or removing a player from a slot** — that's a Zustand action.
+- **Placing or removing a player from a slot** — that's component state in `LineupBuilder`.
 - **Filtering the player list panel** — UI code; uses `canPlayerFillPosition` but isn't a rule.
 - **Magnetic snap detection** — geometry, not a domain rule.
 - **Saving to storage** — persistence, not a rule.

@@ -40,37 +40,37 @@ State of Origin is an annual three-match rugby league series between two Austral
 
 ## The stack in one paragraph
 
-React 18 on Vite. Plain JavaScript — **no TypeScript**. CSS Modules for styling — **no Tailwind**. Drag-and-drop via dnd-kit. Client state via Zustand. React Router for routing. shadcn/ui pulled in component-by-component as needed. **No tests** — manual verification only. **No deployment** until Phase 2 — Netlify comes online when there's a real backend to deploy with. Phase 2 adds Supabase (Postgres + auth + RLS) and TanStack Query for server state.
+React 18 on Vite. Plain JavaScript — **no TypeScript**. CSS Modules for styling — **no Tailwind**. Drag-and-drop via dnd-kit. State via React's built-in hooks. React Router for routing. Supabase (`@supabase/supabase-js`) is the backend; both players and lineups live there. **No tests** — manual verification only. **Not yet deployed** — single-user mode without RLS is unsafe to expose; Netlify deploy comes after auth (Phase C).
 
 ## How the code is organised
 
 ```
 src/
   domain/
-    types.js          ← JSDoc-only documentation of data shapes
-    rules.js          ← four pure rule functions
-    seedPlayers.js    ← hardcoded 56-player array (deleted in Phase 2)
-  components/         ← React components, grouped by feature
-  pages/              ← top-level route components
+    rules.js              ← four pure rule functions
+    autoFill.js           ← lineup auto-fill logic
+    categories.js         ← position-category constants
+  components/             ← React components, grouped by feature
+  pages/                  ← top-level route components
   lib/
+    supabase.js           ← Supabase client
     storage/
-      localStorage.js ← Phase 1 backend
-      supabase.js     ← Phase 2 backend
-      index.js        ← exports the active backend
-  stores/             ← Zustand stores
-  styles/             ← global CSS resets, variables
+      supabaseBackend.js  ← active storage backend
+      index.js            ← re-exports the active backend
+    dnd/                  ← dnd-kit collision helpers
+    formatDate.js
+  styles.css              ← global CSS resets, variables
 ```
 
 Two architectural rules:
 
 1. **`domain/` doesn't import from anywhere else.** Pure logic stays pure. Rule functions don't know about React, storage, or the DOM.
-2. **Components and hooks talk only to `storage`, never directly to localStorage or Supabase.** This is what lets the Phase 2 swap happen as a one-line change rather than a sprawling refactor.
+2. **Components and hooks talk only to `storage`, never directly to Supabase.** Keeps Phase C (auth + per-user filtering) a contained change.
 
 ## Working with Claude Code
 
 This project is built with Claude Code. A few conventions:
 
-- **`CLAUDE.md`** at the repo root captures project conventions Claude Code follows on every session: where rule functions live, the storage interface contract, the architectural rules above, and the stack decisions (no TS, no tests, no Tailwind). Keep it short.
 - **One milestone at a time.** Don't hand Claude Code "do Phase 1." Hand it "do milestone 1.6." Look at the result before moving on.
 - **Manual verification is the testing strategy.** Claude Code shouldn't write tests unprompted.
 - **Small diffs.** If a change starts growing, pause and reconsider scope.
@@ -79,5 +79,5 @@ This project is built with Claude Code. A few conventions:
 
 1. Read `origin-builder-plan.md` for the full spec.
 2. Read `rule-functions-spec.md` for the domain logic — it doubles as a manual verification checklist.
-3. Look at `development-roadmap.md` for the milestone-by-milestone build order.
-4. Look at `seed_players.sql` once you need it — used as a JS array in Phase 1, pasted into Supabase in Phase 2.
+3. Look at `development-roadmap.md` for the milestone-by-milestone build order, then `supabase-setup.md` for the post-pivot Phase A/B/C path.
+4. `supabase/seed_players.sql` is the canonical player roster — re-runnable against the Supabase project.

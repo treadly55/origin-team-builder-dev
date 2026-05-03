@@ -7,8 +7,9 @@ A working doc. Picks up from where the database is fully set up and seeded.
 - ✅ Supabase project created, `.env` wired, smoke test green
 - ✅ Schema in place — `players` and `lineups` tables, RLS off
 - ✅ 88 fake players seeded from `supabase/seed_players.sql` (44 NSW + 44 QLD)
+- ✅ **Phase B complete** — `LineupBuilder` reads players from Supabase; lineups save end-to-end. JS seed and localStorage backend deleted (`d9bb913`, `4141347`).
 
-**Supabase dashboard work is done for now.** Phase C will bring you back when wiring real auth. Everything left in Phase B is local code work in the repo.
+**Phase B is closed.** Phase C is next: add `owner_id`, enable RLS, wire Supabase Auth, deploy.
 
 ## What gets you to "real data on the dev site"
 
@@ -121,19 +122,9 @@ If all 9 work, **Phase B is done.** The app is now using real cloud data.
 
 ---
 
-## After Phase B works — cleanup (B6)
+## ~~After Phase B works — cleanup (B6)~~ ✅ Done
 
-Two things to remove. Both are now dead code:
-
-**Smoke-test button on `/dashboard`** — served its purpose; the real save flow is now exercising Supabase on every action.
-- `src/pages/DashboardPage.jsx`: remove the `import { supabase }`, `smokeStatus` / `smokeMessage` state, `runSmokeTest`, and the `{import.meta.env.DEV && (...)}` block
-- `src/pages/DashboardPage.module.css`: remove `.devTools`, `.smokeButton`, `.smokeStatus*` rules
-
-**`src/domain/seedPlayers.js`** — only `localStorageBackend.js` imports it. Once the localStorage backend is no longer the active backend, this file is dead weight.
-- Delete the file
-- Delete the import + `listPlayers` reference in `src/lib/storage/localStorageBackend.js` — or delete that file too if you don't want to keep it as a fallback option
-
-Git history has both if you ever want them back.
+Done in commits `d9bb913` (smoke-test button removal + `LineupBuilder` swap to `storage.listPlayers`) and `4141347` (deleted `src/domain/seedPlayers.js` and `src/lib/storage/localStorageBackend.js`). Git history has both if you ever want them back.
 
 ---
 
