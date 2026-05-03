@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { DndContext, DragOverlay } from '@dnd-kit/core'
-import { seedPlayers } from '../../domain/seedPlayers.js'
+import { storage } from '../../lib/storage/index.js'
 import { canPlayerFillPosition } from '../../domain/rules.js'
 import { autoFillSlots } from '../../domain/autoFill.js'
 import { magneticCollision } from '../../lib/dnd/magneticCollision.js'
@@ -62,10 +62,22 @@ export default function LineupBuilder({
   const [pendingTeamSwitch, setPendingTeamSwitch] = useState(null)
   const [showAutoFillConfirm, setShowAutoFillConfirm] = useState(false)
 
-  const teamPlayers = useMemo(
-    () => seedPlayers.filter((p) => p.team === selectedTeam),
-    [selectedTeam],
-  )
+  const [teamPlayers, setTeamPlayers] = useState([])
+  const [playersLoading, setPlayersLoading] = useState(true)
+
+  useEffect(() => {
+    let cancelled = false
+    setPlayersLoading(true)
+    storage.listPlayers(selectedTeam).then((players) => {
+      if (cancelled) return
+      setTeamPlayers(players)
+      setPlayersLoading(false)
+    })
+    return () => {
+      cancelled = true
+    }
+  }, [selectedTeam])
+
   const playersById = useMemo(
     () => Object.fromEntries(teamPlayers.map((p) => [p.id, p])),
     [teamPlayers],
@@ -262,7 +274,11 @@ export default function LineupBuilder({
           <BenchColumn slots={slots} playersById={playersById} />
           <div className={styles.fieldArea}>
             <header className={styles.fieldHeader}>
-              <button type="button" onClick={handleAutoFillClick}>
+              <button
+                type="button"
+                onClick={handleAutoFillClick}
+                disabled={playersLoading}
+              >
                 Auto-fill
               </button>
               <button

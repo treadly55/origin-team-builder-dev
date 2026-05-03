@@ -40,53 +40,6 @@
   background: rgba(96, 165, 250, 1);
 }
 
-.devTools {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  margin: -8px 0 20px;
-  padding: 8px 12px;
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px dashed rgba(255, 255, 255, 0.1);
-  border-radius: 6px;
-}
-
-.smokeButton {
-  appearance: none;
-  border: 1px solid rgba(255, 255, 255, 0.18);
-  background: transparent;
-  color: rgba(255, 255, 255, 0.75);
-  padding: 5px 12px;
-  border-radius: 6px;
-  font-size: 0.78rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: background 80ms ease, color 80ms ease;
-}
-
-.smokeButton:hover:not(:disabled) {
-  background: rgba(255, 255, 255, 0.06);
-  color: #ffffff;
-}
-
-.smokeButton:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-
-.smokeStatus {
-  font-size: 0.8rem;
-  color: rgba(255, 255, 255, 0.6);
-}
-
-.smokeStatusOk {
-  color: rgba(120, 220, 150, 0.95);
-}
-
-.smokeStatusError {
-  color: rgba(245, 130, 130, 0.95);
-}
-
 .list {
   list-style: none;
   margin: 0;

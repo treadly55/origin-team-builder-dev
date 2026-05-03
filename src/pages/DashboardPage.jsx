@@ -2,7 +2,6 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import Modal from '../components/common/Modal.jsx'
 import { storage } from '../lib/storage/index.js'
-import { supabase } from '../lib/supabase.js'
 import { formatRelativeOrAbsolute } from '../lib/formatDate.js'
 import styles from './DashboardPage.module.css'
 
@@ -64,8 +63,6 @@ export default function DashboardPage() {
   const [renaming, setRenaming] = useState(null)
   const [deleting, setDeleting] = useState(null)
   const [openMenuId, setOpenMenuId] = useState(null)
-  const [smokeStatus, setSmokeStatus] = useState('idle')
-  const [smokeMessage, setSmokeMessage] = useState('')
   const menuRef = useRef(null)
   const navigate = useNavigate()
 
@@ -139,33 +136,6 @@ export default function DashboardPage() {
     setDeleting(lineup)
   }
 
-  const runSmokeTest = async () => {
-    setSmokeStatus('running')
-    setSmokeMessage('Running…')
-    const { data: inserted, error: insertError } = await supabase
-      .from('lineups')
-      .insert({ name: 'smoke test', team: 'NSW', slots: {} })
-      .select()
-    if (insertError) {
-      console.error('smoke test insert error', insertError)
-      setSmokeStatus('error')
-      setSmokeMessage(`Insert failed: ${insertError.message}`)
-      return
-    }
-    const { data: rows, error: selectError } = await supabase
-      .from('lineups')
-      .select('*')
-    if (selectError) {
-      console.error('smoke test select error', selectError)
-      setSmokeStatus('error')
-      setSmokeMessage(`Select failed: ${selectError.message}`)
-      return
-    }
-    console.log('smoke test result', { inserted, rows })
-    setSmokeStatus('ok')
-    setSmokeMessage(`✓ Inserted 1 row · ${rows.length} total in table`)
-  }
-
   if (lineups == null) return null
 
   return (
@@ -180,31 +150,6 @@ export default function DashboardPage() {
           + New lineup
         </button>
       </header>
-      {import.meta.env.DEV && (
-        <div className={styles.devTools}>
-          <button
-            type="button"
-            className={styles.smokeButton}
-            onClick={runSmokeTest}
-            disabled={smokeStatus === 'running'}
-          >
-            Smoke-test Supabase
-          </button>
-          {smokeMessage && (
-            <span
-              className={[
-                styles.smokeStatus,
-                smokeStatus === 'ok' && styles.smokeStatusOk,
-                smokeStatus === 'error' && styles.smokeStatusError,
-              ]
-                .filter(Boolean)
-                .join(' ')}
-            >
-              {smokeMessage}
-            </span>
-          )}
-        </div>
-      )}
       {lineups.length > 0 && (
         <ul className={styles.list}>
           {lineups.map((l) => {
