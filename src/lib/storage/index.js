@@ -1,3 +1,3 @@
-import { localStorageBackend } from './localStorageBackend.js'
+import { supabaseBackend } from './supabaseBackend.js'
 
-export const storage = localStorageBackend
+export const storage = supabaseBackend
