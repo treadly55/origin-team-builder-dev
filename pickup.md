@@ -1,5 +1,25 @@
 # Pickup
 
+## Session summary (2026-06-07)
+
+**Headline: Phase C (auth) is mostly wired up — login/signup/reset-password UI built, `lineups` table recreated with `owner_id` + RLS enabled. Still needs a second test account to fully verify isolation.**
+
+| Block | What |
+|---|---|
+| **Auth UI built** | `AuthProvider`, `RequireAuth`/`RedirectIfAuthed` route guards, combined `/login` page (login form + signup modal + forgot-password modal), `/reset-password` page. Documented in `docs/session-management.md`. |
+| **`supabaseBackend.js` updated** | `createLineup`, `duplicateLineup`, `listLineups` now resolve `auth.getUser()` and read/write `owner_id`. Sign-out button added to dashboard header. |
+| **`lineups` table recreated** | Old table was dropped (accidentally, by a junior dev helper) and rebuilt fresh via `docs/lineups-table-setup.sql` — `owner_id uuid not null references auth.users(id)`, plus `team`, `name`, `slots`, `version`, timestamps. |
+| **RLS enabled on `lineups`** | All 4 ownership policies applied (`select`/`insert`/`update`/`delete` gated on `owner_id = auth.uid()`). Confirmed showing as enabled in **Authentication → Policies**. |
+| **Sign-up flow tested** | One real account created through the new `/login` signup modal — confirmed working end-to-end (account created, lands on dashboard). |
+
+### What's still open
+
+- **No second account yet** — the cross-account isolation test (sign up a second user, confirm they see an empty dashboard and can't see the first account's lineups) hasn't been run. This is the test that actually *proves* RLS is doing its job, not just "not breaking the happy path."
+- **`players` table RLS** — assumed still in its prior state (was OFF as of the last session); wasn't touched this session since the `lineups` table issue took priority. Worth confirming it's enabled with its read policy before calling Phase C done.
+- Reference SQL for recreating `lineups` from scratch (table + RLS + policies in one script) now lives in `docs/lineups-table-setup.sql` — useful if this happens again.
+
+---
+
 ## Session summary (2026-05-03)
 
 **Headline: Phase B is fully closed. Players AND lineups now come from Supabase end-to-end. The local JS seed and the localStorage backend have been retired.**

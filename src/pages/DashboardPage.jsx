@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import Modal from '../components/common/Modal.jsx'
+import { supabase } from '../lib/supabase.js'
 import { storage } from '../lib/storage/index.js'
 import { formatRelativeOrAbsolute } from '../lib/formatDate.js'
 import styles from './DashboardPage.module.css'
@@ -142,13 +143,22 @@ export default function DashboardPage() {
     <div className={styles.page}>
       <header className={styles.pageHeader}>
         <h1 className={styles.pageTitle}>Your lineups</h1>
-        <button
-          type="button"
-          className={styles.newButton}
-          onClick={() => navigate('/lineup/preview')}
-        >
-          + New lineup
-        </button>
+        <div className={styles.headerActions}>
+          <button
+            type="button"
+            className={styles.signOutButton}
+            onClick={() => supabase.auth.signOut()}
+          >
+            Sign out
+          </button>
+          <button
+            type="button"
+            className={styles.newButton}
+            onClick={() => navigate('/lineup/preview')}
+          >
+            + New lineup
+          </button>
+        </div>
       </header>
       {lineups.length > 0 && (
         <ul className={styles.list}>

@@ -1,0 +1,149 @@
+.page {
+  width: 100%;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  box-sizing: border-box;
+}
+
+.card {
+  width: 100%;
+  max-width: 360px;
+  background: #1a2030;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 12px;
+  padding: 28px;
+  box-sizing: border-box;
+}
+
+.title {
+  font-size: 1.3rem;
+  font-weight: 700;
+  margin: 0 0 20px;
+  color: #f0f3f8;
+  text-align: center;
+}
+
+.fieldLabel {
+  display: block;
+  margin-bottom: 6px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.6);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.input {
+  width: 100%;
+  box-sizing: border-box;
+  appearance: none;
+  background: #232a3a;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 6px;
+  padding: 9px 12px;
+  color: #f0f3f8;
+  font-size: 0.95rem;
+  font-family: inherit;
+  outline: none;
+  margin-bottom: 16px;
+  transition: border-color 80ms ease, background 80ms ease;
+}
+
+.input::placeholder {
+  color: rgba(255, 255, 255, 0.3);
+}
+
+.input:focus {
+  border-color: rgba(96, 165, 250, 0.55);
+  background: #2a3142;
+}
+
+.error {
+  margin: -6px 0 14px;
+  font-size: 0.82rem;
+  color: rgba(248, 113, 113, 0.9);
+}
+
+.submitButton {
+  width: 100%;
+  appearance: none;
+  border: none;
+  background: rgba(96, 165, 250, 0.85);
+  color: #ffffff;
+  padding: 10px 16px;
+  border-radius: 6px;
+  font-size: 0.92rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 80ms ease, opacity 80ms ease;
+}
+
+.submitButton:hover {
+  background: rgba(96, 165, 250, 1);
+}
+
+.submitButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.links {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  margin-top: 18px;
+}
+
+.linkButton {
+  appearance: none;
+  background: transparent;
+  border: none;
+  color: rgba(96, 165, 250, 0.85);
+  font-size: 0.82rem;
+  cursor: pointer;
+  padding: 2px;
+}
+
+.linkButton:hover {
+  color: rgba(96, 165, 250, 1);
+  text-decoration: underline;
+}
+
+.dialogBody {
+  margin: 0 0 4px;
+  font-size: 0.9rem;
+  color: rgba(255, 255, 255, 0.75);
+  line-height: 1.5;
+}
+
+.dialogActions {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+}
+
+.dialogPrimary {
+  appearance: none;
+  border: none;
+  padding: 8px 14px;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  background: rgba(96, 165, 250, 0.85);
+  color: #ffffff;
+  transition: background 80ms ease, opacity 80ms ease;
+}
+
+.dialogPrimary:hover {
+  background: rgba(96, 165, 250, 1);
+}
+
+.dialogPrimary:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}

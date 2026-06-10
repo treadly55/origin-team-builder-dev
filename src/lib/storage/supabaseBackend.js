@@ -37,6 +37,12 @@ function rowToPlayer(row) {
   }
 }
 
+async function currentUserId() {
+  const { data, error } = await supabase.auth.getUser()
+  if (error) throw error
+  return data.user.id
+}
+
 export const supabaseBackend = {
   async listPlayers(team) {
     const { data, error } = await supabase
@@ -49,9 +55,11 @@ export const supabaseBackend = {
   },
 
   async listLineups() {
+    const ownerId = await currentUserId()
     const { data, error } = await supabase
       .from('lineups')
       .select('id, name, team, updated_at')
+      .eq('owner_id', ownerId)
       .order('updated_at', { ascending: false })
     if (error) throw error
     return data.map(rowToLineupSummary)
@@ -68,9 +76,10 @@ export const supabaseBackend = {
   },
 
   async createLineup({ team, name, slots = {} }) {
+    const ownerId = await currentUserId()
     const { data, error } = await supabase
       .from('lineups')
-      .insert({ team, name, slots })
+      .insert({ owner_id: ownerId, team, name, slots })
       .select()
       .single()
     if (error) throw error
@@ -94,6 +103,7 @@ export const supabaseBackend = {
   },
 
   async duplicateLineup(id) {
+    const ownerId = await currentUserId()
     const { data: source, error: fetchError } = await supabase
       .from('lineups')
       .select('*')
@@ -103,6 +113,7 @@ export const supabaseBackend = {
     const { data, error } = await supabase
       .from('lineups')
       .insert({
+        owner_id: ownerId,
         team: source.team,
         name: `${source.name} (copy)`,
         slots: source.slots,
