@@ -2,6 +2,7 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import Modal from '../components/common/Modal.jsx'
 import { supabase } from '../lib/supabase.js'
+import { useAuth } from '../lib/auth/AuthProvider.jsx'
 import { storage } from '../lib/storage/index.js'
 import { formatRelativeOrAbsolute } from '../lib/formatDate.js'
 import styles from './DashboardPage.module.css'
@@ -60,6 +61,7 @@ function RenameForm({ lineup, onSubmit, onCancel }) {
 }
 
 export default function DashboardPage() {
+  const { user } = useAuth()
   const [lineups, setLineups] = useState(null)
   const [renaming, setRenaming] = useState(null)
   const [deleting, setDeleting] = useState(null)
@@ -143,6 +145,7 @@ export default function DashboardPage() {
     <div className={styles.page}>
       <header className={styles.pageHeader}>
         <h1 className={styles.pageTitle}>Your lineups</h1>
+        <p>Hello {user?.email}</p>
         <div className={styles.headerActions}>
           <button
             type="button"
